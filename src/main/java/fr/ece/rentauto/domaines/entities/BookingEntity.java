@@ -1,6 +1,6 @@
 package fr.ece.rentauto.domaines.entities;
 
-import fr.ece.rentauto.domaines.enumarations.BookingStatus;
+import fr.ece.rentauto.domaines.enumerations.BookingStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

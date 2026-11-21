@@ -1,7 +1,7 @@
 package fr.ece.rentauto.domaines.entities;
 
-import fr.ece.rentauto.domaines.enumarations.PaymentMode;
-import fr.ece.rentauto.domaines.enumarations.PaymentStatus;
+import fr.ece.rentauto.domaines.enumerations.PaymentMode;
+import fr.ece.rentauto.domaines.enumerations.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

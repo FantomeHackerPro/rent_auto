@@ -1,7 +1,7 @@
 package fr.ece.rentauto.domaines.entities;
 
-import fr.ece.rentauto.domaines.enumarations.VehicleCategory;
-import fr.ece.rentauto.domaines.enumarations.VehicleStatus;
+import fr.ece.rentauto.domaines.enumerations.VehicleCategory;
+import fr.ece.rentauto.domaines.enumerations.VehicleStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

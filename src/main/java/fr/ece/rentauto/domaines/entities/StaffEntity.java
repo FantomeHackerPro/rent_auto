@@ -1,6 +1,6 @@
 package fr.ece.rentauto.domaines.entities;
 
-import fr.ece.rentauto.domaines.enumarations.StaffRole;
+import fr.ece.rentauto.domaines.enumerations.StaffRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
