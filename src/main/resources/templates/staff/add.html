@@ -1,0 +1,130 @@
+<div class="modal-content" th:fragment="addModal" xmlns:th="http://www.thymeleaf.org">
+    <div class="modal-header text-black bg-light">
+        <h5 class="modal-title" th:text="${addModalTitle}">Title</h5>
+    </div>
+    <div class="modal-body">
+        <form id="add-form" class="needs-validation" novalidate>
+            <div class="container">
+                <div class="row g-1">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingName" name="name" placeholder="Nom" type="text" required>
+                            <label for="floatingName">Nom <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez saisir le nom de l'agence.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingSurName" name="surname" placeholder="Prénom" type="text" required>
+                            <label for="floatingSurName">Prénom <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez saisir le prénom.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="floatingRole" data-placeholder="" aria-label="floatingRole" name="role" required>
+                                <option></option>
+                                <option th:each="r : ${roles}"
+                                        th:value="${r}"
+                                        th:text="${r}">
+                                </option>
+                            </select>
+                            <label for="floatingRole">Catégorie <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez sélectionner un role.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="floatingAgency" data-placeholder="" aria-label="floatingAgency"  name="agencyId" required>
+                                <option></option>
+                                <option th:each="ag : ${agencies}"
+                                        th:value="${ag.id}"
+                                        th:text="${ag.name}">
+                                </option>
+                            </select>
+                            <label for="floatingAgency">Agence <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez sélectionner une agence.</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer bg-light">
+        <button class="btn btn-danger" data-bs-dismiss="modal" id="cancelBtn" type="reset">Annuler</button>
+        <button class="btn btn-primary" type="button" id="submitBtn">Enregistrer</button>
+    </div>
+</div>
+
+<script>
+    $(document).on('click', '#add #submitBtn', function(e) {
+        e.preventDefault();
+
+        const form = document.getElementById('add-form');
+        if (!form) {
+            console.error('Form add-form not found in the DOM.');
+            return;
+        }
+
+        const $addForm = $(form);
+        $addForm.addClass('was-validated');
+
+        if (!form.checkValidity()) {
+            alerts('Veuillez remplir tous les champs de saisie ayant des (<b class="text-danger">*</b>)');
+            return;
+        }
+
+        const request = {
+            name: $addForm.find('input[name="name"]').val().trim(),
+            surname: $addForm.find('input[name="surname"]').val().trim(),
+            role: $addForm.find('select[name="role"]').val().trim(),
+            agencyId: $addForm.find('select[name="agencyId"]').val().trim()
+        };
+
+        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+        $.ajax({
+            url: '/api/staffs/create',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: token && header ? { [header]: token } : {},
+            data: JSON.stringify(request),
+            beforeSend: function() {
+                $('#add #cancelBtn').prop('disabled', true);
+                $('#add #submitBtn').prop('disabled', true).html(`
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Enregistrement...
+            `);
+            },
+            success: function(response) {
+                alerts("Le personnel a été créée avec succès !", 'alert-success', 'bi-check-circle', 2000);
+                setTimeout(function() {
+                    location.reload();
+                }, 2000);
+            },
+            error: function(xhr, status, error) {
+                const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'enregistrement.";
+                alerts(serverMessage);
+                console.error("Erreur lors de l'enregistrement :", xhr.responseText || error);
+                $('#add #cancelBtn').prop('disabled', false);
+                $('#add #submitBtn').prop('disabled', false).text('Enregistrer');
+            }
+        });
+    });
+
+    // Réinitialisation ciblée uniquement sur la modale #add
+    $(document).on('hidden.bs.modal', '#add', function () {
+        const form = document.getElementById('add-form');
+        if (form) {
+            $(form).removeClass('was-validated');
+            form.reset();
+        }
+        $('#add #cancelBtn').prop('disabled', false);
+        $('#add #submitBtn').prop('disabled', false).text('Enregistrer');
+    });
+</script>

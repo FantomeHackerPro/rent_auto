@@ -1,0 +1,163 @@
+<div class="modal-content" th:fragment="addModal" xmlns:th="http://www.thymeleaf.org">
+    <div class="modal-header text-black bg-light">
+        <h5 class="modal-title" th:text="${addModalTitle}">Title</h5>
+    </div>
+    <div class="modal-body">
+        <form id="add-form" class="needs-validation" novalidate>
+            <div class="container">
+                <div class="row g-1">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingRegistrationNumber" name="registerNumber" placeholder="Immatriculation" type="text" required>
+                            <label for="floatingRegistrationNumber">Immatriculation <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez saisir le numéro d'immatriculation.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingBrand" name="brand" placeholder="Marque" type="text" required>
+                            <label for="floatingBrand">Marque <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez renseigner la marque.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingModel" name="model" placeholder="Modèle" type="text" required>
+                            <label for="floatingModel">Modèle <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez renseigner le modèle.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="floatingCategory" data-placeholder="" aria-label="floatingCategory"  name="category" required>
+                                <option></option>
+                                <option th:each="cat : ${vehicleCategories}"
+                                        th:value="${cat}"
+                                        th:text="${cat}">
+                                </option>
+                            </select>
+                            <label for="floatingAgency">Catégorie <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez sélectionner une catégorie.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="floatingAgency" data-placeholder="" aria-label="floatingAgency" name="agencyId" required>
+                                <option></option>
+                                <option th:each="ag : ${agencies}"
+                                        th:value="${ag.id}"
+                                        th:text="${ag.name}">
+                                </option>
+                            </select>
+                            <label for="floatingAgency">Agence <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez sélectionner une Agence.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="floatingEquipment" data-placeholder="" aria-label="floatingEquipment" name="equipmentIds" required multiple="multiple">
+                                <option th:each="e : ${equipments}"
+                                        th:value="${e.id}"
+                                        th:text="${e.label}">
+                                </option>
+                            </select>
+                            <label for="floatingEquipment">Equipement <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez sélectionner un équipement.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingDailyRate" name="dailyRate" placeholder="Tarif Journalier" type="text" required>
+                            <label for="floatingDailyRate">Tarif Journalier <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez renseigner le tarif journalier.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingYear" name="year" placeholder="Année" type="text" required>
+                            <label for="floatingYear">Année <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez renseigner une année.</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer bg-light">
+        <button class="btn btn-danger" data-bs-dismiss="modal" id="cancelBtn" type="reset">Annuler</button>
+        <button class="btn btn-primary" type="button" id="submitBtn">Enregistrer</button>
+    </div>
+</div>
+
+<script>
+    $('#submitBtn').on('click', function(e) {
+        e.preventDefault();
+
+        const form = document.getElementById('add-form');
+        const $form = $('#add-form');
+
+        $form.addClass('was-validated');
+
+        if (!form.checkValidity()) {
+            alerts('Veuillez remplir tout les champs de saisie ayant des (<b class="text-danger">*</b>)');
+            return;
+        }
+
+        let request = {
+            "registerNumber": $('input[name="registerNumber"]').val(),
+            "brand": $('input[name="brand"]').val(),
+            "model": $('input[name="model"]').val(),
+            "category": $('select[name="category"]').val(),
+            "dailyRate": $('input[name="dailyRate"]').val(),
+            "year": parseInt($('input[name="year"]').val()),
+            "agencyId": $('select[name="agencyId"]').val(),
+            "equipmentIds": ($form.find('select[name="equipmentIds"]').val() || []).map(Number),
+        };
+
+        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+        $.ajax({
+            url: 'api/vehicles/create',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: token && header ? { [header]: token } : {},
+            data: JSON.stringify(request),
+            beforeSend: function() {
+                $('#add #cancelBtn').prop('disabled', true);
+                $('#add #submitBtn').prop('disabled', true).html(`
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Enregistrement...
+                `);
+            },
+            success: function(response) {
+                alerts('Véhicule enregistrés avec succès !', 'alert-success', 'bi-check-circle');
+                setTimeout(function() {
+                    location.reload(true);
+                }, 4000);
+            },
+            error: function(xhr, status, error) {
+                alerts("Une erreur est survenue lors de l'enregistrement.");
+                console.error("Erreur lors de l'enregistrement :", xhr.responseText || error);
+                $('#add #cancelBtn').prop('disabled', false);
+                $('#add #submitBtn').prop('disabled', false).html(`
+                    Enregistrement
+                `);
+            },
+        });
+    });
+
+    $('.modal').on('hidden.bs.modal', function () {
+        const $form = $('#add-form');
+        $form.removeClass('was-validated');
+        $form[0].reset();
+    });
+</script>

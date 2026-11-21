@@ -1,0 +1,79 @@
+<div class="modal-content" th:fragment="addInMaintenanceModal" xmlns:th="http://www.thymeleaf.org">
+    <div class="modal-header text-black bg-light">
+        <h5 class="modal-title" th:text="${addInMaintenanceModalTitle}">Title</h5>
+    </div>
+    <div class="modal-body">
+        <blockquote>
+            Vous etes sur le point de mettre ce véhicule en maintenance.
+        </blockquote>
+    </div>
+    <div class="modal-footer bg-light">
+        <button class="btn btn-danger" data-bs-dismiss="modal" id="cancelBtn" type="reset">Annuler</button>
+        <button class="btn btn-primary" type="button" id="submitBtn">Valider</button>
+    </div>
+</div>
+
+<script>
+    $('#submitBtn').on('click', function(e) {
+        e.preventDefault();
+
+        const form = document.getElementById('add-form');
+        const $form = $('#add-form');
+
+        $form.addClass('was-validated');
+
+        if (!form.checkValidity()) {
+            alerts('Veuillez remplir tout les champs de saisie ayant des (<b class="text-danger">*</b>)');
+            return;
+        }
+
+        let request = {
+            "registerNumber": $('input[name="registerNumber"]').val(),
+            "brand": $('input[name="brand"]').val(),
+            "model": $('input[name="model"]').val(),
+            "category": $('select[name="category"]').val(),
+            "dailyRate": $('input[name="dailyRate"]').val(),
+            "year": parseInt($('input[name="year"]').val()),
+            "agencyId": $('select[name="agencyId"]').val(),
+            "equipmentIds": ($form.find('select[name="equipmentIds"]').val() || []).map(Number),
+        };
+
+        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+        $.ajax({
+            url: 'api/vehicles/create',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: token && header ? { [header]: token } : {},
+            data: JSON.stringify(request),
+            beforeSend: function() {
+                $('#add #cancelBtn').prop('disabled', true);
+                $('#add #submitBtn').prop('disabled', true).html(`
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Enregistrement...
+                `);
+            },
+            success: function(response) {
+                alerts('Véhicule enregistrés avec succès !', 'alert-success', 'bi-check-circle');
+                setTimeout(function() {
+                    location.reload(true);
+                }, 4000);
+            },
+            error: function(xhr, status, error) {
+                alerts("Une erreur est survenue lors de l'enregistrement.");
+                console.error("Erreur lors de l'enregistrement :", xhr.responseText || error);
+                $('#add #cancelBtn').prop('disabled', false);
+                $('#add #submitBtn').prop('disabled', false).html(`
+                    Enregistrement
+                `);
+            },
+        });
+    });
+
+    $('.modal').on('hidden.bs.modal', function () {
+        const $form = $('#add-form');
+        $form.removeClass('was-validated');
+        $form[0].reset();
+    });
+</script>

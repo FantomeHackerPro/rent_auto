@@ -1,0 +1,120 @@
+<div class="modal-content" th:fragment="updateModal" xmlns:th="http://www.thymeleaf.org">
+    <div class="modal-header text-black bg-light">
+        <h5 class="modal-title" th:text="${updateModalTitle}">Title</h5>
+    </div>
+    <div class="modal-body">
+        <form id="upd-form" class="needs-validation" novalidate>
+            <div class="container">
+                <div class="row g-1">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingName" name="name" placeholder="Nom de l'agence" type="text" required>
+                            <label for="floatingName">Nom <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez saisir le nom du client.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingEmail" name="email" placeholder="Email" type="email" required>
+                            <label for="floatingEmail">E-mail <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez renseigner l'adresse mail.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingPhone" name="phone" placeholder="Téléphone" type="text" required>
+                            <label for="floatingPhone">N° Téléphone <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez renseigner le numéro de téléphone.</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer bg-light">
+        <button class="btn btn-danger" data-bs-dismiss="modal" id="cancelBtn" type="reset">Annuler</button>
+        <button class="btn btn-warning" type="button" id="submitBtn">Modifier</button>
+    </div>
+</div>
+
+<script>
+    const $udpForm = $('#upd-form');
+    let customerId;
+
+    // 1. Ouverture de la modale et pré-remplissage
+    $(document).on('click', '.openUpdModal', function() {
+        customerId = $(this).attr('data-id');
+        const data = itemData.find(item => item.id === parseInt(customerId, 10));
+
+        if (!data) {
+            alerts("Impossible de charger les données de cette agence.");
+            return;
+        }
+
+        $udpForm.find('input[name="name"]').val(data.name);
+        $udpForm.find('input[name="email"]').val(data.email);
+        $udpForm.find('input[name="phone"]').val(data.phone);
+    });
+
+    // 2. Soumission du formulaire
+    $(document).on('click', '#upd #submitBtn', function(e) {
+        e.preventDefault();
+
+        $udpForm.addClass('was-validated');
+        const form = $udpForm[0]; // Récupère l'élément DOM natif
+
+        if (!form.checkValidity()) {
+            alerts('Veuillez remplir tous les champs de saisie ayant des (<b class="text-danger">*</b>)');
+            return;
+        }
+
+        const request = {
+            name: $udpForm.find('input[name="name"]').val().trim(),
+            email: $udpForm.find('input[name="email"]').val().trim(),
+            phone: $udpForm.find('input[name="phone"]').val().trim()
+        };
+
+        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+        $.ajax({
+            url: `/api/customers/${customerId}/update`,
+            type: 'PUT',
+            contentType: 'application/json',
+            headers: token && header ? { [header]: token } : {},
+            data: JSON.stringify(request),
+            beforeSend: function() {
+                $('#upd #cancelBtn').prop('disabled', true);
+                $('#upd #submitBtn').prop('disabled', true).html(`
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Mise à jour...
+            `);
+            },
+            success: function(response) {
+                alerts("Le client a été mise à jour avec succès !", 'alert-success', 'bi-check-circle', 2000);
+                setTimeout(function() {
+                    location.reload();
+                }, 2000);
+            },
+            error: function(xhr, status, error) {
+                // Récupérer le message d'erreur du backend (Spring Boot / API) s'il existe
+                const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de la mise à jour.";
+                alerts(serverMessage);
+                console.error("Erreur lors de la mise à jour :", xhr.responseText || error);
+                $('#upd #cancelBtn').prop('disabled', false);
+                $('#upd #submitBtn').prop('disabled', false).text('Modifier');
+            }
+        });
+    });
+
+    // 3. Réinitialisation à la fermeture de la modale
+    $('#upd').on('hidden.bs.modal', function () {
+        $udpForm.removeClass('was-validated');
+        $udpForm[0].reset(); // Correction du bug .reset()
+        $('#upd #cancelBtn').prop('disabled', false);
+        $('#upd #submitBtn').prop('disabled', false).text('Modifier');
+    });
+</script>

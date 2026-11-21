@@ -1,0 +1,74 @@
+<aside xmlns:th="http://www.thymleaft.org" id="sidebar" class="sidebar" th:fragment="aside">
+    <ul class="sidebar-nav" id="sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link collapsed" th:href="@{/dashboard}">
+                <i class="bi bi-grid"></i>
+                <span>Tableau de bord</span>
+            </a>
+        </li><!-- End Dashboard Nav -->
+
+        <li class="nav-heading"><hr></li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" th:href="@{/agency}">
+                <i class="bi bi-geo-alt"></i><span>Agence</span>
+            </a>
+        </li><!-- End Agency Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" th:href="@{/customer}">
+                <i class="bi bi-people"></i><span>Client</span>
+            </a>
+        </li><!-- End Customer Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" th:href="@{/equipment}">
+                <i class="bi bi-tools"></i><span>Equipement</span>
+            </a>
+        </li><!-- End Agency Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" th:href="@{/payment}">
+                <i class="bi bi-credit-card"></i><span>Paiement</span>
+            </a>
+        </li><!-- End Payment Nav -->
+        
+        <li class="nav-item">
+            <a class="nav-link collapsed" th:href="@{/staff}">
+                <i class="bi bi-people"></i><span>Personnel</span>
+            </a>
+        </li><!-- End Staff Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" th:href="@{/booking}">
+                <i class="bi bi-card-checklist"></i><span>Reservation</span>
+            </a>
+        </li><!-- End Booking Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" th:href="@{/user}">
+                <i class="bi bi-people"></i><span>Utilisateur</span>
+            </a>
+        </li><!-- End User Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" th:href="@{/vehicle}">
+                <i class="bi bi-truck"></i><span>Vehicules</span>
+            </a>
+        </li><!-- End Vehicle Nav -->
+
+
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link collapsed" data-bs-target="#users-nav" data-bs-toggle="collapse" href="#">-->
+<!--                <i class="bi bi-people"></i><span>Utilisateurs</span><i class="bi bi-chevron-down ms-auto"></i>-->
+<!--            </a>-->
+<!--            <ul id="users-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">-->
+<!--                <li>-->
+<!--                    <a th:href="@{/users}">-->
+<!--                        <i class="bi bi-circle"></i><span>Gestion des utilisateurs</span>-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </li>&lt;!&ndash; End Users Nav &ndash;&gt;-->
+    </ul>
+</aside>

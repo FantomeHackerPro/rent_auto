@@ -1,0 +1,74 @@
+<section class="section" xmlns:th="http://www.thymeleaf.org">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${listTitle}">Liste</h5>
+                    <p align="right">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add"><i class="bi bi-plus-circle-fill me-1"></i> Ajouter</button>
+                    </p>
+
+                    <!-- Table with stripped rows -->
+                    <div>
+                        <table class="table table-striped " id="items">
+                            <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Role</th>
+                                <th>Agence de rattachement</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" data-bs-backdrop="static" id="add" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+                <div th:replace="~{${addModal}}"></div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="upd" data-bs-backdrop="static" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+                <div th:replace="~{${updateModal}}"></div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        let itemData = /*[[${data}]]*/ [];
+        console.log(itemData);
+
+        $(document).ready(function() {
+            $("#items").DataTable({
+                data: itemData,
+                destroy: true,
+                columns: [
+                    {data: 'name'},
+                    {data: 'surname'},
+                    {data: 'role'},
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+
+                            return row.agency.name;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            let item1 = '<i class="bi bi-pencil-fill text-warning pr-5 pl-5 openUpdModal" data-bs-toggle="modal" data-bs-target="#upd" data-id="'+row.id+'" id="open-update-modal" style="cursor: pointer; margin: 0 5px"></i>';
+                            let item2 = '<i class="bi bi-trash-fill text-danger pl-5" style="cursor: pointer; margin: 0 5px"></i>';
+                            let items = item1+''+item2;
+
+                            return items;
+                        }
+                    },
+                ]
+            });
+        });
+    </script>
+</section>

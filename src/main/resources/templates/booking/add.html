@@ -1,0 +1,127 @@
+<div class="modal-content" th:fragment="addModal" xmlns:th="http://www.thymeleaf.org">
+    <div class="modal-header text-black bg-light">
+        <h5 class="modal-title" th:text="${addModalTitle}">Title</h5>
+    </div>
+    <div class="modal-body">
+        <form id="add-form" class="needs-validation" novalidate>
+            <div class="container">
+                <div class="row g-1">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingName" name="name" placeholder="Nom de l'agence" type="text" required>
+                            <label for="floatingName">Nom de l'agence <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez saisir le nom de l'agence.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingCity" name="city" placeholder="Ville" type="text" required>
+                            <label for="floatingCity">Ville <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez renseigner la ville.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingAddress" name="address" placeholder="Adresse" type="text" required>
+                            <label for="floatingAddress">Adresse <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez renseigner l'adresse.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingEmail" name="email" placeholder="Email" type="email" required>
+                            <label for="floatingEmail">E-mail <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez renseigner l'adresse mail.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingPhone" name="phone" placeholder="Téléphone" type="text" required>
+                            <label for="floatingPhone">N° Téléphone <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez renseigner le numéro de téléphone.</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer bg-light">
+        <button class="btn btn-danger" data-bs-dismiss="modal" id="cancelBtn" type="reset">Annuler</button>
+        <button class="btn btn-primary" type="button" id="submitBtn">Enregistrer</button>
+    </div>
+</div>
+
+<script>
+    $(document).on('click', '#add #submitBtn', function(e) {
+        e.preventDefault();
+
+        const form = document.getElementById('add-form');
+        if (!form) {
+            console.error('Form add-form not found in the DOM.');
+            return;
+        }
+
+        const $addForm = $(form);
+        $addForm.addClass('was-validated');
+
+        if (!form.checkValidity()) {
+            alerts('Veuillez remplir tous les champs de saisie ayant des (<b class="text-danger">*</b>)');
+            return;
+        }
+
+        const request = {
+            name: $addForm.find('input[name="name"]').val().trim(),
+            city: $addForm.find('input[name="city"]').val().trim(),
+            address: $addForm.find('input[name="address"]').val().trim(),
+            email: $addForm.find('input[name="email"]').val().trim(),
+            phone: $addForm.find('input[name="phone"]').val().trim()
+        };
+
+        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+        $.ajax({
+            url: '/api/agencies/create', // Ajout du '/' initial
+            type: 'POST',
+            contentType: 'application/json',
+            headers: token && header ? { [header]: token } : {},
+            data: JSON.stringify(request),
+            beforeSend: function() {
+                $('#add #cancelBtn').prop('disabled', true);
+                $('#add #submitBtn').prop('disabled', true).html(`
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Enregistrement...
+            `);
+            },
+            success: function(response) {
+                alerts("L'agence a été créée avec succès !", 'alert-success', 'bi-check-circle', 2000);
+                setTimeout(function() {
+                    location.reload();
+                }, 2000);
+            },
+            error: function(xhr, status, error) {
+                const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'enregistrement.";
+                alerts(serverMessage);
+                console.error("Erreur lors de l'enregistrement :", xhr.responseText || error);
+                $('#add #cancelBtn').prop('disabled', false);
+                $('#add #submitBtn').prop('disabled', false).text('Enregistrer');
+            }
+        });
+    });
+
+    // Réinitialisation ciblée uniquement sur la modale #add
+    $(document).on('hidden.bs.modal', '#add', function () {
+        const form = document.getElementById('add-form');
+        if (form) {
+            $(form).removeClass('was-validated');
+            form.reset();
+        }
+        $('#add #cancelBtn').prop('disabled', false);
+        $('#add #submitBtn').prop('disabled', false).text('Enregistrer');
+    });
+</script>
