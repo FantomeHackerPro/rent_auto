@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserService {
     List<UserEntity> getUsers();
-    UserEntity getUserById(Long id) throws AppException;
+    UserEntity getUser(Long id) throws AppException;
     void addUser(UserRequestDTO request) throws AppException;
     void updateUser(Long id, UserRequestDTO request) throws AppException;
 }

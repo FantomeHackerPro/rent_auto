@@ -1,0 +1,174 @@
+<div class="modal-content">
+    <div class="modal-header text-black bg-light">
+        <h5 class="modal-title" th:text="${paymentModalTitle}">Title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form id="add-form" class="needs-validation" novalidate>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Nouveau paiement</h5>
+                    <div class="container">
+                        <div class="row g-1">
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input class="form-control" id="floatingAmountToPay" name="amountToPay" placeholder="Montant" type="text" disabled>
+                                    <label for="floatingAmountToPay">Montant à payer <i class="text-danger">*</i></label>
+                                    <div class="invalid-feedback">Veuillez saisir la montant.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input class="form-control" id="floatingAmount" name="amount" placeholder="Montant" type="text" required>
+                                    <label for="floatingAmount">Montant <i class="text-danger">*</i></label>
+                                    <div class="invalid-feedback">Veuillez saisir la montant.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <select class="form-select" id="floatingPaymentMode" data-placeholder="" aria-label="floatingPaymentMode" name="paymentMode" required>
+                                        <option></option>
+                                        <option th:each="m : ${paymentModes}"
+                                                th:value="${m}"
+                                                th:text="${m}">
+                                        </option>
+                                    </select>
+                                    <label for="floatingPaymentMode">Moyen de paiement <i class="text-danger">*</i></label>
+                                    <div class="invalid-feedback">Veuillez sélectionner un mode paiement.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <input class="form-control" id="floatingPaymentDate" name="paymentDate" placeholder="Date de paiement" type="date" required>
+                                    <label for="floatingPaymentDate">Date de paiement <i class="text-danger">*</i></label>
+                                    <div class="invalid-feedback">Veuillez renseigner la date de paiement.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mt-3" align="right">
+                                <button class="btn btn-danger" data-bs-dismiss="modal" id="cancelBtn" type="reset">Annuler</button>
+                                <button class="btn btn-primary" type="button" id="submitBtn">Enregistrer</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="card">
+            <div class="card-body ">
+                <h5 class="card-title" th:text="${paymentListTitle}">Liste</h5>
+
+                <div>
+                    <table class="table table-striped " id="paymentItems">
+                        <thead>
+                        <tr>
+                            <th>Montant payé</th>
+                            <th>Date de paiement</th>
+                            <th>Mode de paiement</th>
+                            <th>Statut</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script th:inline="javascript">
+    $(document).on('click', '.openPayementModal', function() {
+        const data = itemData.find(item => item.id === parseInt($(this).attr('data-id'), 10));
+        let contractId = data.contract.id;
+        const amountToPay = data.contract.price;
+        $('input[name="amountToPay"]').val(amountToPay);
+
+        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+        $.ajax({
+            url: '/api/payments/' + contractId + '/contract',
+            type: 'GET',
+            contentType: 'application/json',
+            headers: token && header ? { [header]: token } : {},
+            success: function(response) {
+                let paymentData = response.data;
+                $("#paymentItems").DataTable({
+                    data: paymentData,
+                    destroy: true,
+                    columns: [
+                        {
+                            data: null,
+                            render: function(data, type, row) {
+                                return `
+                        <span class="badge bg-warning">${row.amount}</span>
+                    `;
+                            }
+                        },
+                        {
+                            data: null,
+                            render: function(data, type, row) {
+                                return `
+                        <span class="badge bg-primary">${row.paymentDate}</span>
+                    `;
+                            }
+                        },
+                        {
+                            data: null,
+                            render: function(data, type, row) {
+                                    return `
+                            <span class="badge bg-secondary">${row.paymentMode}</span>
+                        `;
+                            }
+                        },
+                        {
+                            data: null,
+                            render: function(data, type, row) {
+                                let status = row.status ? row.status : "";
+                                let bgColor;
+                                let label;
+
+                                switch (status) {
+                                    case "PENDING":
+                                        bgColor = "bg-warning";
+                                        label = "En cours";
+                                        break;
+                                    case "CONFIRMED":
+                                        bgColor = "bg-primary";
+                                        label = "Confirmé";
+                                        break;
+                                    case "CANCELLED":
+                                        bgColor = "bg-danger text-dark";
+                                        label = "Annulé";
+                                        break;
+                                    default:
+                                        bgColor = "bg-secondary";
+                                        label = status || "Unknown";
+                                }
+
+                                return `
+                        <span class="badge ${bgColor}">${label}</span>
+                    `;
+                            }
+                        },
+                    ]
+                });
+
+            },
+            error: function(xhr, status, error) {
+                const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de la mise à jour.";
+                alerts(serverMessage);
+                console.error("Erreur lors de la mise à jour :", xhr.responseText || error);
+
+            }
+        });
+
+    });
+</script>

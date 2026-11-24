@@ -14,6 +14,7 @@ public class UserMapper {
         user.setUsername(request.getUsername());
         user.setLogin(request.getLogin());
         user.setPassword(request.getPassword());
+        user.setType(request.getUserType());
         return user;
     }
 
@@ -25,19 +26,28 @@ public class UserMapper {
     }
 
     public static UserResponseDTO mapToUserResponse(UserEntity user) {
+        if (user == null) {
+            return null;
+        }
         UserResponseDTO response = new UserResponseDTO();
         response.setLogin(user.getLogin());
         response.setPassword(user.getPassword());
         response.setUsername(user.getUsername());
+        response.setType(user.getType());
         response.setStaff(StaffMapper.mapToStaffSummaryResponse(user.getStaff()));
+        response.setCustomer(CustomerMapper.mapToCustomerSummaryResponse(user.getCustomer()));
         return response;
     }
 
     public static UserResponseDTO mapToUserSummaryResponse(UserEntity user) {
+        if (user == null) {
+            return null;
+        }
         UserResponseDTO response = new UserResponseDTO();
         response.setLogin(user != null ? user.getLogin() : null);
         response.setPassword(user != null ? user.getPassword() : null);
-        response.setUsername(user != null ? user.getUsername() :  null);
+        response.setUsername(user != null ? user.getUsername() : null);
+        response.setType(user != null ? user.getType() : null);
         return response;
     }
 

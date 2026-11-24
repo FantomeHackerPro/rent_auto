@@ -13,11 +13,12 @@
                         <table class="table table-striped " id="items">
                             <thead>
                                 <tr>
-                                    <th>Nom</th>
-                                    <th>Adresse</th>
-                                    <th>Ville</th>
-                                    <th>Adresse email</th>
-                                    <th>N° Téléphone</th>
+                                    <th>Information sur le véhicule</th>
+                                    <th>Information sur le client</th>
+                                    <th>Date début</th>
+                                    <th>Date fin</th>
+                                    <th>Statut</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -37,6 +38,12 @@
                 <div th:replace="~{${updateModal}}"></div>
             </div>
         </div>
+
+        <div class="modal fade" id="payment" data-bs-backdrop="static" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+                <div th:replace="~{${paymentModal}}"></div>
+            </div>
+        </div>
     </div>
 
     <script th:inline="javascript">
@@ -48,35 +55,96 @@
                 data: itemData,
                 destroy: true,
                 columns: [
-                    {data: 'name'},
-                    {data: 'address'},
-                    {data: 'city'},
-                    {data: 'email'},
-                    {data: 'phone'},
-                    // {
-                    //     data: null,
-                    //     render: function(data, type, row) {
-                    //         let year = row.year ? row.year : "";
-                    //         let month = row.month ? row.month : "";
-                    //         let intellectual = row.intellectualPerformance ? row.intellectualPerformance : "";
-                    //         let physical = row.physicalPerformance ? row.physicalPerformance : "";
-                    //
-                    //         return `
-                    //             <span class="small"><b>Mois</b> : ${month}</span><br>
-                    //             <span class="small"><b>Année</b> : ${year}</span><br>
-                    //             <span class="small"><b>Perfoamances physiques </b> : ${physical}</span><br>
-                    //             <span class="small"><b>Performances intellectuels</b> : ${intellectual}</span>
-                    //         `;
-                    //     }
-                    // },
                     {
                         data: null,
                         render: function(data, type, row) {
-                            let item1 = '<i class="bi bi-pencil-fill text-warning pr-5 pl-5 openUpdModal" data-bs-toggle="modal" data-bs-target="#upd" data-id="'+row.id+'" id="open-update-modal" style="cursor: pointer; margin: 0 5px"></i>';
-                            let item2 = '<i class="bi bi-trash-fill text-danger pl-5" style="cursor: pointer; margin: 0 5px"></i>';
-                            let items = item1+''+item2;
+                            let vehicle = row.vehicle;
+                            let registrationNumber = vehicle.registerNumber ? vehicle.registerNumber : "";
+                            let brand = vehicle.brand ? vehicle.brand.toUpperCase() : "";
+                            let model = vehicle.model ? vehicle.model.toUpperCase() : "";
 
-                            return items;
+                            return `
+                                <span class="small"><b>Immatriculation</b> : ${registrationNumber}</span><br>
+                                <span class="small"><b>Model</b> : ${model}</span><br>
+                                <span class="small"><b>Marque</b> : ${brand}</span><br>
+                                <span class="small"><b>Equipements</b> <i class='bi bi-tools text-primary' style='cursor: pointer; margin: 0 5px'></i></span><br>
+                            `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            let customer = row.customer;
+                            let name = customer.name ? customer.name.toUpperCase() : "";
+                            let email = customer.email ? customer.email.toLowerCase() : "";
+                            let phone = customer.phone ? customer.phone : "";
+
+                            return `
+                                <span class="small"><b>Nom</b> : ${name}</span><br>
+                                <span class="small"><b>Email</b> : ${email}</span><br>
+                                <span class="small"><b>Phone</b> : ${phone}</span><br>
+                            `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `
+                                <span class="badge bg-primary">${row.startDate}</span>
+                            `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `
+                                <span class="badge bg-primary">${row.endDate}</span>
+                            `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            let status = row.status ? row.status : "";
+                            let bgColor;
+                            let label;
+
+                            switch (status) {
+                                case "PENDING":
+                                    bgColor = "bg-warning";
+                                    label = "En cours";
+                                    break;
+                                case "CONFIRMED":
+                                    bgColor = "bg-primary";
+                                    label = "Confirmé";
+                                    break;
+                                case "CANCELLED":
+                                    bgColor = "bg-danger text-dark";
+                                    label = "Annulé";
+                                    break;
+                                case "FINISHED":
+                                    bgColor = "bg-success text-dark";
+                                    label = "Terminé";
+                                    break;
+                                default:
+                                    bgColor = "bg-secondary";
+                                    label = status || "Unknown";
+                            }
+
+                            return `
+                                <span class="badge ${bgColor}">${label}</span>
+                            `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            let item1 = row.status === "PENDING" ? '<i class="bi bi-pencil-fill text-warning pr-5 pl-5 openUpdModal" title="modifier" data-bs-toggle="modal" data-bs-target="#upd" data-id="'+row.id+'" id="open-update-modal" style="cursor: pointer; margin: 0 5px"></i>' : '';
+                            let item2 = '<i class="bi bi-credit-card text-primary pr-5 pl-5 openPayementModal" title="paiements" data-bs-toggle="modal" data-bs-target="#payment" data-id="'+row.id+'" style="cursor: pointer; margin: 0 5px"></i>';
+                            let item3 = '<i class="bi bi-card-heading text-primary pr-5 pl-5" title="contrat" data-bs-toggle="modal" data-id="'+row.id+'" style="cursor: pointer; margin: 0 5px"></i>';
+                            let item4 = row.status === "PENDING" ? '<i class="bi bi-trash-fill text-danger pr-5 pl-5 openCancelModal" title="supprimer" data-bs-toggle="modal" data-bs-target="#cancel" data-id="'+row.id+'" style="cursor: pointer; margin: 0 5px"></i>' : '';
+
+                            return item1 + ' ' + item2 + ' ' + item3 + ' ' + item4;
                         }
                     },
                 ]

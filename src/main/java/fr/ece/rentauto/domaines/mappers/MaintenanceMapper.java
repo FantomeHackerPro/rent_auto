@@ -28,6 +28,9 @@ public class MaintenanceMapper {
     }
 
     public static MaintenanceResponseDTO mapToMaintenanceResponse(MaintenanceEntity maintenanceEntity) {
+        if (maintenanceEntity == null) {
+            return null;
+        }
         MaintenanceResponseDTO response = new MaintenanceResponseDTO();
         response.setId(maintenanceEntity.getId());
         response.setDescription(maintenanceEntity.getDescription());
@@ -38,6 +41,9 @@ public class MaintenanceMapper {
     }
 
     public static MaintenanceResponseDTO mapToMaintenanceSummaryResponse(MaintenanceEntity maintenanceEntity) {
+        if (maintenanceEntity == null) {
+            return null;
+        }
         MaintenanceResponseDTO response = new MaintenanceResponseDTO();
         response.setId(maintenanceEntity.getId());
         response.setDescription(maintenanceEntity.getDescription());

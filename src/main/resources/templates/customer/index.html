@@ -52,11 +52,11 @@
                     {
                         data: null,
                         render: function(data, type, row) {
-                            let item1 = '<i class="bi bi-pencil-fill text-warning pr-5 pl-5 openUpdModal" data-bs-toggle="modal" data-bs-target="#upd" data-id="'+row.id+'" id="open-update-modal" style="cursor: pointer; margin: 0 5px"></i>';
-                            let item2 = '<i class="bi bi-trash-fill text-danger pl-5" style="cursor: pointer; margin: 0 5px"></i>';
-                            let items = item1+''+item2;
+                            let item1 = '<i class="bi bi-pencil-fill text-warning pr-5 pl-5 openUpdModal" title="modifier" data-bs-toggle="modal" data-bs-target="#upd" data-id="'+row.id+'" id="open-update-modal" style="cursor: pointer; margin: 0 5px"></i>';
+                            let item2 = '<i class="bi bi-trash-fill text-danger pl-5" title="suppromer" style="cursor: pointer; margin: 0 5px"></i>';
+                            let item3 = '<i class="bi bi-card-checklist text-primary pl-5" title="réservations" data-id="'+row.id+'" style="cursor: pointer; margin: 0 5px"></i>';
 
-                            return items;
+                            return item1 + ' ' + item3;
                         }
                     },
                 ]

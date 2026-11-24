@@ -36,7 +36,7 @@ public class CustomerController {
 
     @GetMapping("/{id}")
     public ResponseMessage<CustomerResponseDTO> getCustomer(@PathVariable Long id) throws AppException {
-        CustomerResponseDTO customer = CustomerMapper.mapToCustomerResponse(customerService.getCustomerById(id));
+        CustomerResponseDTO customer = CustomerMapper.mapToCustomerResponse(customerService.getCustomer(id));
         int code = HttpStatus.NOT_FOUND.value();
         if (customer != null) {
             code = HttpStatus.OK.value();

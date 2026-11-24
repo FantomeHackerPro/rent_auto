@@ -1,9 +1,11 @@
 package fr.ece.rentauto.services;
 
 import fr.ece.rentauto.configs.AppException;
+import fr.ece.rentauto.domaines.entities.CustomerEntity;
 import fr.ece.rentauto.domaines.entities.StaffEntity;
 import fr.ece.rentauto.domaines.entities.UserEntity;
 import fr.ece.rentauto.domaines.mappers.UserMapper;
+import fr.ece.rentauto.repositories.CustomerRepository;
 import fr.ece.rentauto.repositories.StaffRepository;
 import fr.ece.rentauto.repositories.UserRepository;
 import fr.ece.rentauto.controllers.dtos.UserRequestDTO;
@@ -20,6 +22,7 @@ import java.util.List;
 public class UserProvider implements UserService {
 
     private StaffRepository staffRepository;
+    private CustomerRepository customerRepository;
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
 
@@ -29,24 +32,34 @@ public class UserProvider implements UserService {
     }
 
     @Override
-    public UserEntity getUserById(Long id) throws AppException {
+    public UserEntity getUser(Long id) throws AppException {
         return this.userRepository.findById(id).orElseThrow(() -> new AppException("User not found.", HttpStatus.NOT_FOUND.value()));
     }
 
     @Transactional
     @Override
     public void addUser(UserRequestDTO request) throws AppException {
-        StaffEntity staff = this.staffRepository.findById(request.getStaffId()).orElseThrow(() -> new AppException("Staff not found.", HttpStatus.NOT_FOUND.value()));
-        request.setPassword(passwordEncoder.encode(request.getPassword()));
+        if(this.userRepository.existsByLogin(request.getLogin())) {
+           throw new AppException("User are already exist.", HttpStatus.BAD_REQUEST.value());
+        }
+
+        request.setPassword(passwordEncoder.encode("user"));
         UserEntity user = UserMapper.mapToUserToAdd(request);
-        user.setStaff(staff);
+
+        if (request.getStaffId() != null) {
+            StaffEntity staff = this.staffRepository.findById(request.getStaffId()).orElseThrow(() -> new AppException("Staff not found.", HttpStatus.NOT_FOUND.value()));
+            user.setStaff(staff);
+        }else{
+            CustomerEntity customer = this.customerRepository.findById(request.getCustomerId()).orElseThrow(() -> new AppException("Customer not found.", HttpStatus.NOT_FOUND.value()));
+            user.setCustomer(customer);
+        }
+
         userRepository.save(user);
-        staff.setUser(user);
-        staffRepository.save(staff);
     }
 
+    @Transactional
     @Override
     public void updateUser(Long id, UserRequestDTO request) throws AppException {
-        this.userRepository.save(UserMapper.mapToUserToUpdate(this.getUserById(id), request));
+        this.userRepository.save(UserMapper.mapToUserToUpdate(this.getUser(id), request));
     }
 }

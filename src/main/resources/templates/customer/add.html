@@ -30,6 +30,15 @@
                         </div>
                     </div>
 
+                    <div class="col-md-12 mt-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="hasAccount">
+                            <label class="form-check-label" for="hasAccount">
+                                Créer un utilisateur associé au client
+                            </label>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </form>
@@ -61,7 +70,8 @@
         const request = {
             name: $addForm.find('input[name="name"]').val().trim(),
             email: $addForm.find('input[name="email"]').val().trim(),
-            phone: $addForm.find('input[name="phone"]').val().trim()
+            phone: $addForm.find('input[name="phone"]').val().trim(),
+            hasAccount: $('#hasAccount').is(':checked'),
         };
 
         const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');

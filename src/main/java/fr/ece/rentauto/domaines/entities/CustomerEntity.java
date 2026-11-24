@@ -30,7 +30,7 @@ public class CustomerEntity {
     @Column(nullable = false, length = 50)
     private String phone;
 
-    @OneToOne
+    @OneToOne(mappedBy = "customer")
     private UserEntity user;
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)

@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface PaymentService {
     List<PaymentEntity> getPayments();
+    List<PaymentEntity> getPayments(Long contractId);
     PaymentEntity getPayment(Long id) throws AppException;
     void  addPayment(PaymentRequestDTO request);
     void updatePayment(Long id, PaymentRequestDTO request) throws AppException;

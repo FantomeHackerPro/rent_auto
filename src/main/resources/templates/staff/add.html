@@ -16,9 +16,17 @@
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingSurName" name="surname" placeholder="Prénom" type="text" required>
-                            <label for="floatingSurName">Prénom <i class="text-danger">*</i></label>
+                            <input class="form-control" id="floatingSurname" name="surname" placeholder="Prénom" type="text" required>
+                            <label for="floatingSurname">Prénom <i class="text-danger">*</i></label>
                             <div class="invalid-feedback">Veuillez saisir le prénom.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingEmail" name="email" placeholder="Email" type="email" required>
+                            <label for="floatingEmail">Email <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez saisir l'adresse mail.</div>
                         </div>
                     </div>
 
@@ -47,6 +55,15 @@
                             </select>
                             <label for="floatingAgency">Agence <i class="text-danger">*</i></label>
                             <div class="invalid-feedback">Veuillez sélectionner une agence.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mt-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="hasAccount">
+                            <label class="form-check-label" for="hasAccount">
+                                Créer un utilisateur associé au personnel
+                            </label>
                         </div>
                     </div>
 
@@ -81,6 +98,8 @@
         const request = {
             name: $addForm.find('input[name="name"]').val().trim(),
             surname: $addForm.find('input[name="surname"]').val().trim(),
+            email: $addForm.find('input[name="email"]').val().trim(),
+            hasAccount: $('#hasAccount').is(':checked'),
             role: $addForm.find('select[name="role"]').val().trim(),
             agencyId: $addForm.find('select[name="agencyId"]').val().trim()
         };

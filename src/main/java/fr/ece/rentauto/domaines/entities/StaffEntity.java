@@ -26,11 +26,14 @@ public class StaffEntity {
     @Column(nullable = false, length = 50)
     private String surname;
 
+    @Column(nullable = false, length = 50)
+    private String email;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private StaffRole role;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "staff")
     private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)

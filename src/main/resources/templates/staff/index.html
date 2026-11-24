@@ -48,13 +48,28 @@
                 destroy: true,
                 columns: [
                     {data: 'name'},
-                    {data: 'surname'},
-                    {data: 'role'},
                     {
                         data: null,
                         render: function(data, type, row) {
-
-                            return row.agency.name;
+                            return `
+                                <span style="text-transform: capitalize">${row.surname}</span>
+                            `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `
+                                <span class="badge bg-primary" style="text-transform: capitalize">${row.role}</span>
+                            `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `
+                                <span class="badge bg-secondary">${row.agency.name}</span>
+                            `;
                         }
                     },
                     {

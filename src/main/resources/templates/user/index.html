@@ -14,9 +14,10 @@
                             <thead>
                             <tr>
                                 <th>Nom</th>
-                                <th>Prénom</th>
-                                <th>Role</th>
-                                <th>Agence de rattachement</th>
+                                <th>Login</th>
+                                <th>Type</th>
+                                <th>Titulaire</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -47,14 +48,23 @@
                 data: itemData,
                 destroy: true,
                 columns: [
-                    {data: 'name'},
-                    {data: 'surname'},
-                    {data: 'role'},
+                    {data: 'username'},
+                    {data: 'login'},
                     {
                         data: null,
                         render: function(data, type, row) {
-
-                            return row.agency.name;
+                            return `
+                                <span class="badge bg-secondary">${row.type}</span>
+                            `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            let staff = row.staff;
+                            let customer = row.customer;
+                            let name = row.type === "STAFF" ? staff ? staff.name : '' : customer ? customer.name : '';
+                            return name ? name.toUpperCase() : '';
                         }
                     },
                     {

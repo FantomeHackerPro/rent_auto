@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +23,15 @@ public class ContractEntity {
     @Column(name = "contract_id")
     private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String signatureDate;
+    @Column(nullable = false)
+    private LocalDate signatureDate;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
     private boolean validity;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "contract")
     private BookingEntity booking;
 
     @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY)

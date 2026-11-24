@@ -1,6 +1,7 @@
 package fr.ece.rentauto.controllers.dtos;
 
 import fr.ece.rentauto.domaines.enumerations.BookingStatus;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,15 +12,19 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 public class BookingRequestDTO {
-    
+
+    @NotNull
     private LocalDate startDate;
 
+    @NotNull
     private LocalDate endDate;
 
     private BookingStatus status;
 
-    private int customerId;
+    @NotNull
+    private Long customerId;
 
-    private int vehicleId;
+    @NotNull
+    private Long vehicleId;
 
 }

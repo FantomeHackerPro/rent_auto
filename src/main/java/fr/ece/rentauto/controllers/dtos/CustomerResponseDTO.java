@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class CustomerResponseDTO {
+
     private Long id;
 
     private String name;

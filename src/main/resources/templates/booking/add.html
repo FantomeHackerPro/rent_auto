@@ -6,43 +6,59 @@
         <form id="add-form" class="needs-validation" novalidate>
             <div class="container">
                 <div class="row g-1">
+
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingName" name="name" placeholder="Nom de l'agence" type="text" required>
-                            <label for="floatingName">Nom de l'agence <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez saisir le nom de l'agence.</div>
+                            <input class="form-control" id="floatingName" name="startDate" placeholder="Date début" type="date" required>
+                            <label for="floatingName">Date début <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez saisir la date début.</div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingCity" name="city" placeholder="Ville" type="text" required>
-                            <label for="floatingCity">Ville <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez renseigner la ville.</div>
+                            <input class="form-control" id="floatingCity" name="endDate" placeholder="Date fin" type="date" required>
+                            <label for="floatingCity">Date fin <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez renseigner la date de fin.</div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingAddress" name="address" placeholder="Adresse" type="text" required>
-                            <label for="floatingAddress">Adresse <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez renseigner l'adresse.</div>
+                            <select class="form-select" id="floatingVehicle" data-placeholder="" aria-label="floatingVehicle" name="vehicleId" required>
+                                <option></option>
+                                <option th:each="v : ${vehicles}"
+                                        th:value="${v.id}"
+                                        th:text="${v.brand}">
+                                </option>
+                            </select>
+                            <label for="floatingVehicle">Véhicule <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez sélectionner un véhicule.</div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingEmail" name="email" placeholder="Email" type="email" required>
-                            <label for="floatingEmail">E-mail <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez renseigner l'adresse mail.</div>
+                            <select class="form-select" id="floatingCustomer" data-placeholder="" aria-label="floatingCustomer" name="customerId" required>
+                                <option></option>
+                                <option th:each="c : ${customers}"
+                                        th:value="${c.id}"
+                                        th:text="${c.name}">
+                                </option>
+                            </select>
+                            <label for="floatingCustomer">Client <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez sélectionner un client.</div>
                         </div>
                     </div>
 
-                    <div class="col-md-12">
+                    <div class="col-md-4 d-grid gap-2">
+                        <button class="btn btn-secondary" id="estimationBtn" type="button">Estimer</button>
+                    </div>
+
+                    <div class="col-md-8">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingPhone" name="phone" placeholder="Téléphone" type="text" required>
-                            <label for="floatingPhone">N° Téléphone <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez renseigner le numéro de téléphone.</div>
+                            <input class="form-control" id="floatingPrice" name="price" value="0" placeholder="Prix" type="text" disabled readonly>
+                            <label for="floatingPrice">Prix <i class="text-danger">*</i></label>
                         </div>
                     </div>
 
@@ -56,8 +72,9 @@
     </div>
 </div>
 
-<script>
-    $(document).on('click', '#add #submitBtn', function(e) {
+<script th:inline="javascript">
+    const $addForm = $("#add-form");
+    $(document).on('click', '#add #estimationBtn', function(e) {
         e.preventDefault();
 
         const form = document.getElementById('add-form');
@@ -69,24 +86,88 @@
         const $addForm = $(form);
         $addForm.addClass('was-validated');
 
-        if (!form.checkValidity()) {
-            alerts('Veuillez remplir tous les champs de saisie ayant des (<b class="text-danger">*</b>)');
-            return;
-        }
+        let vehiclesData = /*[[${vehicles}]]*/ [];
+        let vehicle = vehiclesData.find(item => item.id === parseInt($addForm.find('select[name="vehicleId"]').val(), 10));
+        console.log(vehicle);
+        let amount = vehicle.dailyRate;
 
         const request = {
-            name: $addForm.find('input[name="name"]').val().trim(),
-            city: $addForm.find('input[name="city"]').val().trim(),
-            address: $addForm.find('input[name="address"]').val().trim(),
-            email: $addForm.find('input[name="email"]').val().trim(),
-            phone: $addForm.find('input[name="phone"]').val().trim()
+            startDate: $addForm.find('input[name="startDate"]').val()?.trim(),
+            endDate: $addForm.find('input[name="endDate"]').val()?.trim(),
+            amount: amount
         };
 
         const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
         const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
         $.ajax({
-            url: '/api/agencies/create', // Ajout du '/' initial
+            url: '/api/bookings/estimation',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: token && header ? { [header]: token } : {},
+            data: JSON.stringify(request),
+            beforeSend: function() {
+                $('#add #estimationBtn').prop('disabled', true).html(`
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Estimation...
+            `);
+            },
+            success: function(response) {
+                $('input[name="price"]').val(response.data[0]);
+                $('#add #estimationBtn').prop('disabled', false).text('Estimer');
+            },
+            error: function(xhr, status, error) {
+                const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'estimation.";
+                if (typeof alerts === 'function') {
+                    alerts(serverMessage);
+                }
+                console.error("Erreur lors de l'estimation :", xhr.responseText || error);
+                $('#add #estimationBtn').prop('disabled', false).text('Estimer');
+            }
+        });
+    });
+
+    $(document).on('click', '#add #submitBtn', function(e) {
+        e.preventDefault();
+
+        const form = document.getElementById('add-form');
+        if (!form) {
+            console.error('Form add-form not found in the DOM.');
+            return;
+        }
+
+        // Récupérer le formulaire dynamiquement au moment du clic
+        const $addForm = $(form);
+        $addForm.addClass('was-validated');
+
+        if (!form.checkValidity()) {
+            if (typeof alerts === 'function') {
+                alerts('Veuillez remplir tous les champs de saisie ayant des (<b class="text-danger">*</b>)');
+            }
+            return;
+        }
+
+        const request = {
+            startDate: $addForm.find('input[name="startDate"]').val()?.trim(),
+            endDate: $addForm.find('input[name="endDate"]').val()?.trim(),
+            customerId: $addForm.find('select[name="customerId"]').val()?.trim(),
+            vehicleId: $addForm.find('select[name="vehicleId"]').val()?.trim(),
+        };
+
+        // const contract = {
+        //     price: $addForm.find('input[name="price"]').val()?.trim(),
+        // };
+        //
+        // const request = {
+        //     contractRequest: contract,
+        //     bookingRequest: booking,
+        // };
+
+        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+        $.ajax({
+            url: '/api/bookings/create',
             type: 'POST',
             contentType: 'application/json',
             headers: token && header ? { [header]: token } : {},
@@ -99,14 +180,18 @@
             `);
             },
             success: function(response) {
-                alerts("L'agence a été créée avec succès !", 'alert-success', 'bi-check-circle', 2000);
+                if (typeof alerts === 'function') {
+                    alerts("La réservation a été créée avec succès !", 'alert-success', 'bi-check-circle', 2000);
+                }
                 setTimeout(function() {
                     location.reload();
                 }, 2000);
             },
             error: function(xhr, status, error) {
                 const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'enregistrement.";
-                alerts(serverMessage);
+                if (typeof alerts === 'function') {
+                    alerts(serverMessage);
+                }
                 console.error("Erreur lors de l'enregistrement :", xhr.responseText || error);
                 $('#add #cancelBtn').prop('disabled', false);
                 $('#add #submitBtn').prop('disabled', false).text('Enregistrer');

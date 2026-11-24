@@ -18,10 +18,15 @@ public class StaffRequestDTO {
     @NotBlank
     private String surname;
 
+    @NotBlank
+    private String email;
+
     @NotEmpty
     private StaffRole role;
 
     @NotEmpty
     private Long agencyId;
+
+    private boolean hasAccount;
 
 }

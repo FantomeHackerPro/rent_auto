@@ -38,6 +38,9 @@ public class VehicleMapper {
     }
 
     public static VehicleResponseDTO mapToVehicleResponse(VehicleEntity Vehicle) {
+        if (Vehicle == null) {
+            return null;
+        }
         VehicleResponseDTO response = new VehicleResponseDTO();
         response.setId(Vehicle.getId());
         response.setBrand(Vehicle.getBrand());
@@ -55,6 +58,9 @@ public class VehicleMapper {
     }
 
     public static VehicleResponseDTO mapToVehicleSummaryResponse(VehicleEntity Vehicle) {
+        if (Vehicle == null) {
+            return null;
+        }
         VehicleResponseDTO response = new VehicleResponseDTO();
         response.setId(Vehicle.getId());
         response.setBrand(Vehicle.getBrand());
