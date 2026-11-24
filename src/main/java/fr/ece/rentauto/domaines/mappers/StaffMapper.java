@@ -14,6 +14,7 @@ public class StaffMapper {
         StaffEntity staff = new StaffEntity();
         staff.setName(request.getName());
         staff.setRole(request.getRole());
+        staff.setEmail(request.getEmail());
         staff.setSurname(request.getSurname());
         staff.setCreatedAt(LocalDateTime.now());
         return staff;
@@ -22,16 +23,21 @@ public class StaffMapper {
     public static StaffEntity mapToStaffToUpdate(StaffEntity staffToUpdate, StaffRequestDTO request) {
         staffToUpdate.setSurname(request.getSurname());
         staffToUpdate.setName(request.getName());
+        staffToUpdate.setEmail(request.getEmail());
         staffToUpdate.setRole(request.getRole());
         staffToUpdate.setUpdatedAt(LocalDateTime.now());
         return staffToUpdate;
     }
 
     public static StaffResponseDTO mapToStaffResponse(StaffEntity staff) {
+        if (staff == null) {
+            return null;
+        }
         StaffResponseDTO response = new StaffResponseDTO();
         response.setId(staff.getId());
         response.setName(staff.getName());
         response.setSurname(staff.getSurname());
+        response.setEmail(staff.getEmail());
         response.setRole(staff.getRole());
         response.setAgency(AgencyMapper.mapToAgencySummaryResponse(staff.getAgency()));
         response.setUser(UserMapper.mapToUserSummaryResponse(staff.getUser()));
@@ -39,9 +45,13 @@ public class StaffMapper {
     }
 
     public static StaffResponseDTO mapToStaffSummaryResponse(StaffEntity staff) {
+        if (staff == null) {
+            return null;
+        }
         StaffResponseDTO response = new StaffResponseDTO();
         response.setId(staff != null ? staff.getId() : null);
         response.setName(staff != null ? staff.getName() : null);
+        response.setEmail(staff != null ? staff.getEmail() : null);
         response.setSurname(staff != null ? staff.getSurname() : null);
         response.setRole(staff != null ? staff.getRole() : null);
         return  response;

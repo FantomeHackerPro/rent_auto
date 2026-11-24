@@ -3,6 +3,7 @@ package fr.ece.rentauto.controllers.dtos;
 import fr.ece.rentauto.domaines.enumerations.UserType;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,9 @@ public class UserRequestDTO {
     @NotBlank
     private String login;
 
-    @NotBlank
     private String password;
 
+    @NotNull
     private UserType userType;
 
     private Long staffId;

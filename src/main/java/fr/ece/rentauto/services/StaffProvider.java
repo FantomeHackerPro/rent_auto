@@ -1,13 +1,16 @@
 package fr.ece.rentauto.services;
 
 import fr.ece.rentauto.configs.AppException;
+import fr.ece.rentauto.controllers.dtos.UserRequestDTO;
 import fr.ece.rentauto.domaines.entities.StaffEntity;
 import fr.ece.rentauto.controllers.dtos.StaffRequestDTO;
+import fr.ece.rentauto.domaines.enumerations.UserType;
 import fr.ece.rentauto.domaines.mappers.StaffMapper;
 import fr.ece.rentauto.repositories.StaffRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,6 +20,7 @@ public class StaffProvider implements StaffService{
 
     private StaffRepository staffRepository;
     private AgencyService agencyService;
+    private UserService userService;
 
     @Override
     public List<StaffEntity> getAllStaff() {
@@ -28,13 +32,25 @@ public class StaffProvider implements StaffService{
         return this.staffRepository.findById(id).orElseThrow(() -> new AppException("Staff not found.", HttpStatus.NOT_FOUND.value()));
     }
 
+    @Transactional
     @Override
     public void addStaff(StaffRequestDTO request) throws AppException {
         StaffEntity staffToAdd = StaffMapper.mapToStaffToAdd(request);
         staffToAdd.setAgency(this.agencyService.getAgency(request.getAgencyId()));
         this.staffRepository.save(staffToAdd);
+
+        if (request.isHasAccount()) {
+            UserRequestDTO userRequest = new UserRequestDTO();
+            userRequest.setStaffId(staffToAdd.getId());
+            userRequest.setLogin(staffToAdd.getEmail());
+            userRequest.setUsername(staffToAdd.getName());
+            userRequest.setUserType(UserType.STAFF);
+
+            userService.addUser(userRequest);
+        }
     }
 
+    @Transactional
     @Override
     public void updateStaff(Long id, StaffRequestDTO request) throws AppException {
         StaffEntity staffToUpdate = StaffMapper.mapToStaffToUpdate(this.getStaff(id), request);
@@ -42,6 +58,7 @@ public class StaffProvider implements StaffService{
         this.staffRepository.save(staffToUpdate);
     }
 
+    @Transactional
     @Override
     public void deleteStaff(Long id) {
 

@@ -32,7 +32,7 @@ public class BookingEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private VehicleEntity vehicle;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ContractEntity contract;
 
     @ManyToOne(fetch = FetchType.LAZY)

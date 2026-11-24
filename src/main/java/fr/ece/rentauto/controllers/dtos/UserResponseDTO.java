@@ -1,5 +1,6 @@
 package fr.ece.rentauto.controllers.dtos;
 
+import fr.ece.rentauto.domaines.enumerations.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,8 @@ public class UserResponseDTO {
     private String login;
 
     private String password;
+
+    private UserType type;
 
     private StaffResponseDTO staff;
 

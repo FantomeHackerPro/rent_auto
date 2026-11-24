@@ -8,6 +8,7 @@ import fr.ece.rentauto.repositories.AgencyRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,16 +28,19 @@ public class AgencyProvider implements AgencyService {
         return this.agencyRepository.findById(id).orElseThrow(() -> new AppException("Agency not found.", HttpStatus.NOT_FOUND.value()));
     }
 
+    @Transactional
     @Override
     public void addAgency(AgencyRequestDTO request) {
         this.agencyRepository.save(AgencyMapper.mapToAgencyToAdd(request));
     }
 
+    @Transactional
     @Override
     public void updateAgency(Long id, AgencyRequestDTO request) throws AppException {
         this.agencyRepository.save(AgencyMapper.mapToAgencyToUpdate(this.getAgency(id), request));
     }
 
+    @Transactional
     @Override
     public void deleteAgency(Long id) {
 

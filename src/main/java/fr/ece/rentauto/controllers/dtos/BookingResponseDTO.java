@@ -18,7 +18,6 @@ public class BookingResponseDTO {
 
     private LocalDate endDate;
 
-
     private BookingStatus status;
 
     private VehicleResponseDTO vehicle;

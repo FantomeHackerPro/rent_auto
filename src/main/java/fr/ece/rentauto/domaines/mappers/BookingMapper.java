@@ -3,6 +3,7 @@ package fr.ece.rentauto.domaines.mappers;
 import fr.ece.rentauto.controllers.dtos.BookingRequestDTO;
 import fr.ece.rentauto.controllers.dtos.BookingResponseDTO;
 import fr.ece.rentauto.domaines.entities.BookingEntity;
+import fr.ece.rentauto.domaines.enumerations.BookingStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class BookingMapper {
         BookingEntity booking = new BookingEntity();
         booking.setStartDate(request.getStartDate());
         booking.setEndDate(request.getEndDate());
+        booking.setStatus(BookingStatus.PENDING);
         booking.setCreatedAt(LocalDateTime.now());
         return booking;
     }
@@ -28,6 +30,9 @@ public class BookingMapper {
     }
 
     public static BookingResponseDTO mapToBookingResponse(BookingEntity booking) {
+        if (booking == null) {
+            return null;
+        }
         BookingResponseDTO response = new BookingResponseDTO();
         response.setId(booking.getId());
         response.setStartDate(booking.getStartDate());
@@ -40,6 +45,9 @@ public class BookingMapper {
     }
 
     public static BookingResponseDTO mapToBookingSummaryResponse(BookingEntity booking) {
+        if (booking == null) {
+            return null;
+        }
         BookingResponseDTO response = new BookingResponseDTO();
         response.setId(booking.getId());
         response.setStartDate(booking.getStartDate());

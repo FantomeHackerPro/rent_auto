@@ -22,6 +22,14 @@
                         </div>
                     </div>
 
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingEmail" name="email" placeholder="Email" type="email" required>
+                            <label for="floatingEmail">Email <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez saisir l'adresse mail.</div>
+                        </div>
+                    </div>
+
                     <div class="col-md-6">
                         <div class="form-floating">
                             <select class="form-select" id="floatingRole" data-placeholder="" aria-label="floatingRole" name="role" required>
@@ -76,6 +84,7 @@
 
         $udpForm.find('input[name="name"]').val(data.name);
         $udpForm.find('input[name="surname"]').val(data.surname);
+        $udpForm.find('input[name="email"]').val(data.email);
         $udpForm.find('select[name="agencyId"]').val(data.agency.id).prop('selected', true);
         $udpForm.find('select[name="role"]').val(data.role).prop('selected', true);
     });
@@ -95,6 +104,7 @@
         const request = {
             name: $udpForm.find('input[name="name"]').val().trim(),
             surname: $udpForm.find('input[name="surname"]').val().trim(),
+            email: $udpForm.find('input[name="email"]').val().trim(),
             role: $udpForm.find('select[name="role"]').val().trim(),
             agencyId: $udpForm.find('select[name="agencyId"]').val().trim()
         };

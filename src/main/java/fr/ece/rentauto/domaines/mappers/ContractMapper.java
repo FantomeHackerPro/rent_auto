@@ -4,6 +4,7 @@ import fr.ece.rentauto.domaines.entities.ContractEntity;
 import fr.ece.rentauto.controllers.dtos.ContractRequestDTO;
 import fr.ece.rentauto.controllers.dtos.ContractResponseDTO;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ public class ContractMapper {
     public static ContractEntity mapToContractToAdd(ContractRequestDTO request) {
         ContractEntity contract = new ContractEntity();
         contract.setPrice(request.getPrice());
-        contract.setSignatureDate(request.getSignatureDate());
+        contract.setSignatureDate(LocalDate.now());
         contract.setValidity(true);
         contract.setCreatedAt(LocalDateTime.now());
         return contract;
@@ -21,13 +22,14 @@ public class ContractMapper {
 
     public static ContractEntity mapToContractToUpdate(ContractEntity contractToUpdate, ContractRequestDTO request) {
         contractToUpdate.setPrice(request.getPrice());
-        contractToUpdate.setSignatureDate(request.getSignatureDate());
-        contractToUpdate.setValidity(request.isValidity());
         contractToUpdate.setUpdatedAt(LocalDateTime.now());
         return contractToUpdate;
     }
 
     public static ContractResponseDTO mapToContractResponse(ContractEntity contractEntity) {
+        if (contractEntity == null) {
+            return null;
+        }
         ContractResponseDTO response = new ContractResponseDTO();
         response.setId(contractEntity.getId());
         response.setPrice(contractEntity.getPrice());
@@ -39,6 +41,9 @@ public class ContractMapper {
     }
 
     public static ContractResponseDTO mapToContractSummaryResponse(ContractEntity contractEntity) {
+        if (contractEntity == null) {
+            return null;
+        }
         ContractResponseDTO response = new ContractResponseDTO();
         response.setId(contractEntity.getId());
         response.setPrice(contractEntity.getPrice());

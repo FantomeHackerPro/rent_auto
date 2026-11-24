@@ -27,6 +27,9 @@ public class CustomerMapper {
     }
 
     public static CustomerResponseDTO mapToCustomerResponse(CustomerEntity customer) {
+        if (customer == null) {
+            return null;
+        }
         CustomerResponseDTO response = new CustomerResponseDTO();
         response.setId(customer.getId());
         response.setEmail(customer.getEmail());
@@ -37,6 +40,9 @@ public class CustomerMapper {
     }
 
     public static CustomerResponseDTO mapToCustomerSummaryResponse(CustomerEntity customer) {
+        if (customer == null) {
+            return null;
+        }
         CustomerResponseDTO response = new CustomerResponseDTO();
         response.setId(customer.getId());
         response.setEmail(customer.getEmail());

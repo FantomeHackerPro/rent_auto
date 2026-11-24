@@ -8,6 +8,7 @@ import fr.ece.rentauto.repositories.ContractRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,22 +24,7 @@ public class ContractProvider implements ContractService{
     }
 
     @Override
-    public ContractEntity getContractById(Long id) throws AppException {
+    public ContractEntity getContract(Long id) throws AppException {
         return this.contractRepository.findById(id).orElseThrow(() -> new AppException("Contract not found.", HttpStatus.NOT_FOUND.value()));
-    }
-
-    @Override
-    public void addAgency(ContractRequestDTO request) {
-        contractRepository.save(ContractMapper.mapToContractToAdd(request));
-    }
-
-    @Override
-    public void updateAgency(Long id, ContractRequestDTO request) throws AppException {
-        contractRepository.save(ContractMapper.mapToContractToUpdate(this.getContractById(id), request));
-    }
-
-    @Override
-    public void deleteAgency(Long id) {
-
     }
 }

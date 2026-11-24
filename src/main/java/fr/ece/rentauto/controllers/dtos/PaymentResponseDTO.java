@@ -1,6 +1,7 @@
 package fr.ece.rentauto.controllers.dtos;
 
 import fr.ece.rentauto.domaines.enumerations.PaymentMode;
+import fr.ece.rentauto.domaines.enumerations.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,8 @@ public class PaymentResponseDTO {
     private LocalDate paymentDate;
 
     private PaymentMode paymentMode;
+
+    private PaymentStatus status;
 
     private ContractResponseDTO contract;
 

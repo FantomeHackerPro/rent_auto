@@ -1,7 +1,9 @@
 package fr.ece.rentauto.controllers.web;
 
 import fr.ece.rentauto.controllers.dtos.AgencyRequestDTO;
+import fr.ece.rentauto.domaines.enumerations.PaymentMode;
 import fr.ece.rentauto.domaines.enumerations.StaffRole;
+import fr.ece.rentauto.domaines.enumerations.UserType;
 import fr.ece.rentauto.domaines.enumerations.VehicleCategory;
 import fr.ece.rentauto.domaines.mappers.*;
 import fr.ece.rentauto.services.*;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 @Controller
 public class WebViewController {
 
+    private final BookingService bookingService;
     private AgencyService agencyService;
     private VehicleService vehicleService;
     private EquipmentService equipmentService;
@@ -49,16 +52,22 @@ public class WebViewController {
 
     @GetMapping("/booking")
     public String Booking (Model model) {
-        model.addAttribute("pageTitle", "Gestion des reservations - Rent Car");
-        model.addAttribute("sectionTitle", "Reservations");
-        model.addAttribute("data", new ArrayList<>());
+        model.addAttribute("pageTitle", "Gestion des réservations - Rent Car");
+        model.addAttribute("sectionTitle", "Réservations");
+        model.addAttribute("data", BookingMapper.mapToBookingResponseList(bookingService.getBookings()));
+        model.addAttribute("vehicles", VehicleMapper.mapToVehicleResponseList(vehicleService.getVehicles()));
+        model.addAttribute("customers", CustomerMapper.mapToCustomerResponseList(customerService.getCustomers()));
+        model.addAttribute("paymentModes", PaymentMode.values());
         model.addAttribute("sectionGroupTitle", "");
         model.addAttribute("content", "booking/index");
-        model.addAttribute("listTitle", "Liste des reservations");
+        model.addAttribute("listTitle", "Liste des réservations");
         model.addAttribute("addModal", "booking/add");
-        model.addAttribute("addModalTitle", "Enregistrement d'une reservation");
+        model.addAttribute("addModalTitle", "Enregistrement d'une réservation");
         model.addAttribute("updateModal", "booking/update");
-        model.addAttribute("updateModalTitle", "Edition d'une reservation");
+        model.addAttribute("updateModalTitle", "Edition d'une réservation");
+        model.addAttribute("paymentListTitle", "Liste des paiement");
+        model.addAttribute("paymentModal", "booking/payment");
+        model.addAttribute("paymentModalTitle", "Paiements");
 
         return "layouts/main";
     }
@@ -146,7 +155,9 @@ public class WebViewController {
         model.addAttribute("pageTitle", "Gestion des utilisateurs - Rent Auto");
         model.addAttribute("sectionTitle", "Utilisateurs");
         model.addAttribute("data", UserMapper.mapToUserResponseList(this.userService.getUsers()));
-        model.addAttribute("roles", StaffRole.values());
+        model.addAttribute("staffs", StaffMapper.mapToStaffResponseList(this.staffService.getAllStaff()));
+        model.addAttribute("customers", CustomerMapper.mapToCustomerResponseList(this.customerService.getCustomers()));
+        model.addAttribute("userTypes", UserType.values());
         model.addAttribute("sectionGroupTitle", "");
         model.addAttribute("content", "user/index");
         model.addAttribute("listTitle", "Liste des utilisateurs");
@@ -175,6 +186,9 @@ public class WebViewController {
         model.addAttribute("updateModalTitle", "Edition d'un véhicule");
         model.addAttribute("addInMaintenanceModal", "vehicle/add-in-maintenance");
         model.addAttribute("addInMaintenanceModalTitle", "Mise en maintenance");
+        model.addAttribute("maintenanceListTitle", "Liste des maintenances");
+        model.addAttribute("maintenanceModal", "vehicle/maintenance");
+        model.addAttribute("maintenanceModalTitle", "Maintenances");
 
         return "layouts/main";
     }

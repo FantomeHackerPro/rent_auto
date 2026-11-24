@@ -16,6 +16,8 @@ public class StaffResponseDTO {
 
     private String surname;
 
+    private String email;
+
     private StaffRole role;
 
     private AgencyResponseDTO agency;

@@ -8,6 +8,7 @@ import fr.ece.rentauto.repositories.MaintenanceRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class MaintenanceProvider implements MaintenanceService{
         return this.maintenanceRepository.findById(id).orElseThrow(() -> new AppException("Maintenance not found.", HttpStatus.NOT_FOUND.value()));
     }
 
+    @Transactional
     @Override
     public void addMaintenance(MaintenanceRequestDTO request) throws AppException {
         MaintenanceEntity maintenanceToAdd = MaintenanceMapper.mapToMaintenanceToAdd(request);
@@ -34,6 +36,7 @@ public class MaintenanceProvider implements MaintenanceService{
         this.maintenanceRepository.save(maintenanceToAdd);
     }
 
+    @Transactional
     @Override
     public void updateMaintenance(Long id, MaintenanceRequestDTO request) throws AppException {
         MaintenanceEntity maintenanceToUpdate = MaintenanceMapper.mapToMaintenanceToUpdate(this.getMaintenanceById(id), request);
@@ -41,6 +44,7 @@ public class MaintenanceProvider implements MaintenanceService{
         this.maintenanceRepository.save(maintenanceToUpdate);
     }
 
+    @Transactional
     @Override
     public void deleteMaintenance(Long id) {
 

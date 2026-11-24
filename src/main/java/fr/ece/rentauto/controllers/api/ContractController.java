@@ -38,7 +38,7 @@ public class ContractController {
 
     @GetMapping("/{id}")
     public ResponseMessage<ContractResponseDTO> getContract(@PathVariable Long id) throws AppException {
-        ContractResponseDTO contract = ContractMapper.mapToContractResponse(contractService.getContractById(id));
+        ContractResponseDTO contract = ContractMapper.mapToContractResponse(contractService.getContract(id));
         int code = HttpStatus.NOT_FOUND.value();
         if (contract != null) {
             code = HttpStatus.OK.value();

@@ -2,14 +2,22 @@ package fr.ece.rentauto.controllers.api;
 
 import fr.ece.rentauto.configs.AppException;
 import fr.ece.rentauto.configs.ResponseMessage;
+import fr.ece.rentauto.controllers.dtos.AmountEstimationRequestDTO;
+import fr.ece.rentauto.controllers.dtos.BookingPayloadRequestDTO;
 import fr.ece.rentauto.controllers.dtos.BookingRequestDTO;
 import fr.ece.rentauto.controllers.dtos.BookingResponseDTO;
 import fr.ece.rentauto.domaines.mappers.BookingMapper;
 import fr.ece.rentauto.services.BookingService;
+import fr.ece.rentauto.services.ContractService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @AllArgsConstructor
@@ -18,6 +26,7 @@ import java.util.List;
 public class BookingController {
 
     private BookingService bookingService;
+    private ContractService contractService;
 
     @GetMapping
     public ResponseMessage<List<BookingResponseDTO>> getBookings() {
@@ -68,6 +77,20 @@ public class BookingController {
         response.setMessage("Booking has been updated successfully");
         response.setStatus(code);
         response.setCode(code);
+        return response;
+    }
+
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+    @PostMapping("/estimation")
+    public ResponseMessage<BigDecimal> amountEstimation(@RequestBody AmountEstimationRequestDTO request) {
+        BigDecimal amount = bookingService.amountEstimation(request);
+        int code = HttpStatus.OK.value();
+        ResponseMessage<BigDecimal> response = new ResponseMessage<>();
+        response.setMessage("Amount estimation");
+        response.setStatus(code);
+        response.setCode(code);
+        response.getData().add(amount);
         return response;
     }
 

@@ -18,7 +18,6 @@
                                     <th>Année</th>
                                     <th>Statut</th>
                                     <th>Agence</th>
-                                    <th>Equipements</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -40,9 +39,9 @@
             </div>
         </div>
 
-        <div class="modal fade" id="addInMaintenance" data-bs-backdrop="static" tabindex="-1">
-            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
-                <div th:replace="~{${addInMaintenanceModal}}"></div>
+        <div class="modal fade" id="maintenance" data-bs-backdrop="static" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+                <div th:replace="~{${maintenanceModal}}"></div>
             </div>
         </div>
     </div>
@@ -61,11 +60,11 @@
                             let registrationNumber = row.registerNumber ? row.registerNumber : "";
                             let brand = row.brand ? row.brand.toUpperCase() : "";
                             let model = row.model ? row.model.toUpperCase() : "";
-                            let year = row.year ? row.year : "";
                             return `
                                 <span class="small"><b>Immatriculation</b> : ${registrationNumber}</span><br>
                                 <span class="small"><b>Model</b> : ${model}</span><br>
                                 <span class="small"><b>Marque</b> : ${brand}</span><br>
+                                <span class="small"><b>Equipements</b> <i class='bi bi-tools text-primary' style='cursor: pointer; margin: 0 5px'></i></span><br>
                             `;
                         }
                     },
@@ -126,31 +125,8 @@
                     {
                         data: null,
                         render: function(data, type, row) {
-                            return `
-                                <div class="accordion" id="accordionEquipment">
-                                    <div class="accordion-item">
-                                      <h2 class="accordion-header" id="headingOne">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                          Equipements
-                                        </button>
-                                      </h2>
-                                      <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionEquipment">
-                                        <div class="accordion-body">
-                                          <ul>
-                                            <li></li>
-                                          </ul>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                            `;
-                        }
-                    },
-                    {
-                        data: null,
-                        render: function(data, type, row) {
-                            let item1 = '<i class="bi bi-pencil-fill text-warning pr-5 pl-5 openUpdModal" data-bs-toggle="modal" data-bs-target="#upd" data-id="'+row.id+'" id="open-update-modal" style="cursor: pointer; margin: 0 5px"></i>';
-                            let item3 = '<i class="bi bi-cone-striped text-primary pr-5 pl-5 addInMaintenance" data-bs-toggle="modal" data-bs-target="#addInMaintenance" data-id="'+row.id+'" id="open-maintenance-modal" style="cursor: pointer; margin: 0 5px"></i>';
+                            let item1 = '<i class="bi bi-pencil-fill text-warning pr-5 pl-5 openUpdModal" data-bs-toggle="modal" data-bs-target="#upd" data-id="'+row.id+'" style="cursor: pointer; margin: 0 5px"></i>';
+                            let item3 = '<i class="bi bi-cone-striped text-primary pr-5 pl-5 maintenanceModal" data-bs-toggle="modal" data-bs-target="#maintenance" data-id="'+row.id+'" style="cursor: pointer; margin: 0 5px"></i>';
                             let item2 = '<i class="bi bi-trash-fill text-danger pl-5" style="cursor: pointer; margin: 0 5px"></i>';
                             let items = item1+' '+item3;
 

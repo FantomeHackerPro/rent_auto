@@ -1,5 +1,6 @@
 package fr.ece.rentauto.controllers.dtos;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,8 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class EquipmentRequestDTO {
 
-    private Long id;
-
+    @NotBlank
     private String label;
 
 }

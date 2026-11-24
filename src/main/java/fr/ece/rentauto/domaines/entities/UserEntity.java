@@ -1,5 +1,6 @@
 package fr.ece.rentauto.domaines.entities;
 
+import fr.ece.rentauto.domaines.enumerations.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,10 +27,14 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    @OneToOne
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserType type;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private StaffEntity staff;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private CustomerEntity customer;
 
 }

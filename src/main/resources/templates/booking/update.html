@@ -6,43 +6,59 @@
         <form id="upd-form" class="needs-validation" novalidate>
             <div class="container">
                 <div class="row g-1">
+
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingName" name="name" placeholder="Nom de l'agence" type="text" required>
-                            <label for="floatingName">Nom de l'agence <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez saisir le nom de l'agence.</div>
+                            <input class="form-control" id="updStartDate" name="startDate" placeholder="Date début" type="date" required>
+                            <label for="updStartDate">Date début <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez saisir la date début.</div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingCity" name="city" placeholder="Ville" type="text" required>
-                            <label for="floatingCity">Ville <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez renseigner la ville.</div>
+                            <input class="form-control" id="updEndDate" name="endDate" placeholder="Date fin" type="date" required>
+                            <label for="updEndDate">Date fin <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez renseigner la date de fin.</div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingAddress" name="address" placeholder="Adresse" type="text" required>
-                            <label for="floatingAddress">Adresse <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez renseigner l'adresse.</div>
+                            <select class="form-select" id="updVehicle" aria-label="Véhicule" name="vehicleId" required>
+                                <option value=""></option>
+                                <option th:each="v : ${vehicles}"
+                                        th:value="${v.id}"
+                                        th:text="${v.brand}">
+                                </option>
+                            </select>
+                            <label for="updVehicle">Véhicule <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez sélectionner un véhicule.</div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingEmail" name="email" placeholder="Email" type="email" required>
-                            <label for="floatingEmail">E-mail <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez renseigner l'adresse mail.</div>
+                            <select class="form-select" id="updCustomer" aria-label="Client" name="customerId" disabled required>
+                                <option value=""></option>
+                                <option th:each="c : ${customers}"
+                                        th:value="${c.id}"
+                                        th:text="${c.name}">
+                                </option>
+                            </select>
+                            <label for="updCustomer">Client <i class="text-danger">*</i></label>
+                            <div class="invalid-feedback">Veuillez sélectionner un client.</div>
                         </div>
                     </div>
 
-                    <div class="col-md-12">
+                    <div class="col-md-4 d-grid gap-2">
+                        <button class="btn btn-secondary" id="estimationBtn" type="button">Estimer</button>
+                    </div>
+
+                    <div class="col-md-8">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingPhone" name="phone" placeholder="Téléphone" type="text" required>
-                            <label for="floatingPhone">N° Téléphone <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez renseigner le numéro de téléphone.</div>
+                            <input class="form-control" id="floatingPrice" name="price" value="0" placeholder="Prix" type="text" disabled readonly>
+                            <label for="floatingPrice">Prix <i class="text-danger">*</i></label>
                         </div>
                     </div>
 
@@ -51,95 +67,165 @@
         </form>
     </div>
     <div class="modal-footer bg-light">
-        <button class="btn btn-danger" data-bs-dismiss="modal" id="cancelBtn" type="reset">Annuler</button>
-        <button class="btn btn-warning" type="button" id="submitBtn">Modifier</button>
+        <button class="btn btn-danger" data-bs-dismiss="modal" id="updCancelBtn" type="reset">Annuler</button>
+        <button class="btn btn-warning" type="button" id="updSubmitBtn">Modifier</button>
     </div>
 </div>
 
-<script>
+<script th:inline="javascript">
+    let bookingId;
+    let contractId;
     const $udpForm = $('#upd-form');
-    let agencyId;
+    const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+    const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
-    // 1. Ouverture de la modale et pré-remplissage
     $(document).on('click', '.openUpdModal', function() {
-        agencyId = $(this).attr('data-id');
-        const data = itemData.find(item => item.id === parseInt(agencyId, 10));
+        bookingId = $(this).attr('data-id');
+        const data = itemData.find(item => item.id === parseInt(bookingId, 10));
 
         if (!data) {
-            alerts("Impossible de charger les données de cette agence.");
+            alerts("Impossible de charger les données de cette réservation.");
             return;
         }
 
-        $udpForm.find('input[name="name"]').val(data.name);
-        $udpForm.find('input[name="city"]').val(data.city);
-        $udpForm.find('input[name="address"]').val(data.address);
-        $udpForm.find('input[name="email"]').val(data.email);
-        $udpForm.find('input[name="phone"]').val(data.phone);
+        contractId = data.contract?.id;
+
+        $udpForm.find('input[name="startDate"]').val(data.startDate ? data.startDate : '');
+        $udpForm.find('input[name="endDate"]').val(data.endDate ? data.endDate : '');
+        $udpForm.find('input[name="price"]').val(data.contract?.price ?? '');
+
+        // Vérifiez si data contient customerId ou customer.id
+        const custId = data.customerId ?? data.customer?.id;
+        const vehId = data.vehicleId ?? data.vehicle?.id;
+
+        $udpForm.find('select[name="customerId"]').val(custId).trigger('change');
+        $udpForm.find('select[name="vehicleId"]').val(vehId).trigger('change');
     });
 
     // 2. Soumission du formulaire
-    $(document).on('click', '#upd #submitBtn', function(e) {
+    $(document).on('click', '#upd #updSubmitBtn', function(e) {
         e.preventDefault();
 
+        const form = $udpForm[0];
+        if (!form) {
+            console.error('Formulaire #upd-form introuvable.');
+            return;
+        }
+
         $udpForm.addClass('was-validated');
-        const form = $udpForm[0]; // Récupère l'élément DOM natif
 
         if (!form.checkValidity()) {
             alerts('Veuillez remplir tous les champs de saisie ayant des (<b class="text-danger">*</b>)');
             return;
         }
 
+        const data = itemData.find(item => item.id === parseInt(bookingId, 10));
+
         const request = {
-            name: $udpForm.find('input[name="name"]').val().trim(),
-            city: $udpForm.find('input[name="city"]').val().trim(),
-            address: $udpForm.find('input[name="address"]').val().trim(),
-            email: $udpForm.find('input[name="email"]').val().trim(),
-            phone: $udpForm.find('input[name="phone"]').val().trim()
+            id: bookingId,
+            startDate: $udpForm.find('input[name="startDate"]').val()?.trim(),
+            endDate: $udpForm.find('input[name="endDate"]').val()?.trim(),
+            customerId: $udpForm.find('select[name="customerId"]').val()?.trim(),
+            status: data.status,
+            vehicleId: $udpForm.find('select[name="vehicleId"]').val()?.trim(),
         };
 
-        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+        // const contract = {
+        //     id: contractId,
+        //     price: $udpForm.find('input[name="price"]').val()?.trim(),
+        // };
+        //
+        // const request = {
+        //     contractRequest: contract,
+        //     bookingRequest: booking,
+        // };
 
         $.ajax({
-            url: `/api/agencies/${agencyId}/update`,
+            url: '/api/bookings/' + bookingId + '/update',
             type: 'PUT',
-            contentType: 'application/json', // Plus propre que dans headers
+            contentType: 'application/json',
             headers: token && header ? { [header]: token } : {},
             data: JSON.stringify(request),
             beforeSend: function() {
-                $('#upd #cancelBtn').prop('disabled', true);
-                $('#upd #submitBtn').prop('disabled', true).html(`
+                $('#upd #updCancelBtn').prop('disabled', true);
+                $('#upd #updSubmitBtn').prop('disabled', true).html(`
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                 Mise à jour...
             `);
             },
             success: function(response) {
-                // Fermer la modale avant d'afficher le succès
-                $('#upd').modal('hide');
-
-                alerts("L'agence a été mise à jour avec succès !", 'alert-success', 'bi-check-circle', 2000);
-
+                alerts("La réservation a été mise à jour avec succès !", 'alert-success', 'bi-check-circle', 2000);
                 setTimeout(function() {
                     location.reload();
                 }, 2000);
             },
             error: function(xhr, status, error) {
-                // Récupérer le message d'erreur du backend (Spring Boot / API) s'il existe
                 const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de la mise à jour.";
                 alerts(serverMessage);
-
                 console.error("Erreur lors de la mise à jour :", xhr.responseText || error);
-                $('#upd #cancelBtn').prop('disabled', false);
-                $('#upd #submitBtn').prop('disabled', false).text('Modifier');
+                $('#upd #updCancelBtn').prop('disabled', false);
+                $('#upd #updSubmitBtn').prop('disabled', false).text('Modifier');
             }
         });
     });
 
-    // 3. Réinitialisation à la fermeture de la modale
-    $('#upd').on('hidden.bs.modal', function () {
-        $udpForm.removeClass('was-validated');
-        $udpForm[0].reset(); // Correction du bug .reset()
-        $('#upd #cancelBtn').prop('disabled', false);
-        $('#upd #submitBtn').prop('disabled', false).text('Modifier');
+    $(document).on('hidden.bs.modal', '#upd', function () {
+        const $udpForm = $('#upd-form');
+        if ($udpForm.length) {
+            $udpForm.removeClass('was-validated');
+            $udpForm[0].reset();
+        }
+        $('#upd #updCancelBtn').prop('disabled', false);
+        $('#upd #updSubmitBtn').prop('disabled', false).text('Modifier');
+    });
+
+    $(document).on('click', '#upd #estimationBtn', function(e) {
+        e.preventDefault();
+
+        const form = document.getElementById('upd-form');
+        if (!form) {
+            console.error('Form upd-form not found in the DOM.');
+            return;
+        }
+
+        const $updForm = $(form);
+        $updForm.addClass('was-validated');
+
+        let vehiclesData = /*[[${vehicles}]]*/ [];
+        let vehicle = vehiclesData.find(item => item.id === parseInt($updForm.find('select[name="vehicleId"]').val(), 10));
+        console.log(vehicle);
+        let amount = vehicle.dailyRate;
+
+        const request = {
+            startDate: $updForm.find('input[name="startDate"]').val()?.trim(),
+            endDate: $updForm.find('input[name="endDate"]').val()?.trim(),
+            amount: amount
+        };
+
+        $.ajax({
+            url: '/api/bookings/estimation',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: token && header ? { [header]: token } : {},
+            data: JSON.stringify(request),
+            beforeSend: function() {
+                $('#upd #estimationBtn').prop('disabled', true).html(`
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Estimation...
+            `);
+            },
+            success: function(response) {
+                $('input[name="price"]').val(response.data[0]);
+                $('#upd #estimationBtn').prop('disabled', false).text('Estimer');
+            },
+            error: function(xhr, status, error) {
+                const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'estimation.";
+                if (typeof alerts === 'function') {
+                    alerts(serverMessage);
+                }
+                console.error("Erreur lors de l'estimation :", xhr.responseText || error);
+                $('#upd #estimationBtn').prop('disabled', false).text('Estimer');
+            }
+        });
     });
 </script>

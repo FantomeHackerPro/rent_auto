@@ -8,6 +8,7 @@ import fr.ece.rentauto.repositories.PaymentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,20 +24,28 @@ public class PaymentProvider implements PaymentService{
     }
 
     @Override
+    public List<PaymentEntity> getPayments(Long contractId) {
+        return this.paymentRepository.findByContractId(contractId);
+    }
+
+    @Override
     public PaymentEntity getPayment(Long id) throws AppException {
         return this.paymentRepository.findById(id).orElseThrow(() -> new AppException("Payment not found.", HttpStatus.NOT_FOUND.value()));
     }
 
+    @Transactional
     @Override
     public void addPayment(PaymentRequestDTO request) {
         this.paymentRepository.save(PaymentMapper.mapToPaymentToAdd(request));
     }
 
+    @Transactional
     @Override
     public void updatePayment(Long id, PaymentRequestDTO request) throws AppException {
         this.paymentRepository.save(PaymentMapper.mapToPaymentToUpdate(this.getPayment(id), request));
     }
 
+    @Transactional
     @Override
     public void deletePayment(Long id) {
 

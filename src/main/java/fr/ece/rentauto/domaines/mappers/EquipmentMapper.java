@@ -23,6 +23,9 @@ public class EquipmentMapper {
     }
 
     public static EquipmentResponseDTO  mapToEquipmentToResponse(EquipmentEntity equipment) {
+        if (equipment == null) {
+            return null;
+        }
         EquipmentResponseDTO response = new EquipmentResponseDTO();
         response.setId(equipment.getId());
         response.setLabel(equipment.getLabel());

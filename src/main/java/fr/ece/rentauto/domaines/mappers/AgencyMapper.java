@@ -32,6 +32,9 @@ public class AgencyMapper {
     }
 
     public static AgencyResponseDTO mapToAgencyResponse(AgencyEntity agency) {
+        if (agency == null) {
+            return null;
+        }
         AgencyResponseDTO response = new AgencyResponseDTO();
         response.setId(agency.getId());
         response.setAddress(agency.getAddress());

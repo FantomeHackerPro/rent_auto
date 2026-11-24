@@ -8,6 +8,7 @@ import fr.ece.rentauto.repositories.EquipmentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,16 +33,19 @@ public class EquipmentProvider implements EquipmentService{
         return this.equipmentRepository.findById(id).orElseThrow(() -> new AppException("Equipment not found.", HttpStatus.NOT_FOUND.value()));
     }
 
+    @Transactional
     @Override
     public void addEquipment(EquipmentRequestDTO request) {
         this.equipmentRepository.save(EquipmentMapper.mapToEquipmentToAdd(request));
     }
 
+    @Transactional
     @Override
     public void updateEquipment(Long id, EquipmentRequestDTO request) throws AppException {
         this.equipmentRepository.save(EquipmentMapper.mapToEquipmentToUpdate(this.getEquipmentById(id), request));
     }
 
+    @Transactional
     @Override
     public void deleteEquipment(Long id) {
 

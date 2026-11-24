@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @AllArgsConstructor
@@ -14,7 +15,7 @@ public class ContractResponseDTO {
 
     private Long id;
 
-    private String signatureDate;
+    private LocalDate signatureDate;
 
     private BigDecimal price;
 
