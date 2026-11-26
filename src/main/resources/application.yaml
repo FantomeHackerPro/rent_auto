@@ -11,9 +11,9 @@ spring:
       org.springframework.security: DEBUG
 
   datasource:
-    url: jdbc:mysql://localhost:3306/rent_auto?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:8889/rent_auto?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
-    password:
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
