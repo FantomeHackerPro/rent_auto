@@ -67,7 +67,7 @@
             <div th:each="vehicle : ${vehicles}"
                  th:if="${vehicle != null}"
                  th:class="${#lists.size(vehicles) == 1} ? 'col-12' : 'col-12 col-md-6 col-lg-4'">
-                <div class="card col-md-3">
+                <div class="card col-md-2">
                     <div class="position-relative">
                         <img th:src="${(vehicle?.imageUrl != null and !#strings.isEmpty(vehicle?.imageUrl)) ? vehicle.imageUrl : '/assets/img/logo.png'}"
                              class="card-img-top"
