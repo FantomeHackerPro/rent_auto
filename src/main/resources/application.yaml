@@ -1,14 +1,7 @@
+
 spring:
   application:
     name: Rent Auto
-
-  springdoc:
-    paths-to-match: /api/**
-    packages-to-scan: com.innovatesolutions.rentauto
-
-  logging:
-    level:
-      org.springframework.security: DEBUG
 
   datasource:
     url: jdbc:mysql://localhost:3306/rent_auto?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -19,20 +12,28 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: update  # Options courantes : create, create-drop, update, validate, none
-    show-sql: true        # Affiche les requêtes SQL dans la console (utile en développement)
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
-        format_sql: true  # Formate le SQL pour qu'il soit plus lisible dans les logs
+        format_sql: true
+
+springdoc:
+  paths-to-match: /api/**
+  packages-to-scan: com.innovatesolutions.rentauto
+
+logging:
+  level:
+    org.springframework.security: DEBUG
 
 server:
-  port: 8080              # Port sur lequel votre application va démarrer
+  port: 8080
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: health,prometheus
   endpoint:
-    prometheus:
-      enabled: true
+    health:
+      show-details: always
