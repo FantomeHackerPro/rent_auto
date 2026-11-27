@@ -1,11 +1,11 @@
-<section class="section" xmlns:th="http://www.thymeleaf.org">
+<section class="section" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${listTitle}">Liste</h5>
                     <p align="right">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add"><i class="bi bi-plus-circle-fill me-1"></i> Ajouter</button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" sec:authorize="hasAnyRole('MANAGER', 'AGENT')" data-bs-target="#add"><i class="bi bi-plus-circle-fill me-1"></i> Ajouter</button>
                     </p>
 
                     <!-- Table with stripped rows -->
@@ -13,6 +13,7 @@
                         <table class="table table-striped " id="items">
                             <thead>
                                 <tr>
+                                    <th></th>
                                     <th>Infos véhicule</th>
                                     <th>Tarif journalier</th>
                                     <th>Année</th>
@@ -44,16 +45,40 @@
                 <div th:replace="~{${maintenanceModal}}"></div>
             </div>
         </div>
+
+        <div class="modal fade" id="equipment" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+                <div th:replace="~{${equipmentModal}}"></div>
+            </div>
+        </div>
     </div>
 
     <script th:inline="javascript">
         let itemData = /*[[${data}]]*/ [];
+
+        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
         $(document).ready(function() {
             $("#items").DataTable({
                 data: itemData,
                 destroy: true,
                 columns: [
+                    {
+                        data: null,
+                        orderable: false,
+                        render: function(data, type, row) {
+                            const imgSrc = row.imageUrl ? row.imageUrl : '/assets/img/car-placeholder.jpg';
+                            const altText = `${row.brand || ''} ${row.model || ''}`.trim() || 'Véhicule';
+                            return `
+                                <img src="${imgSrc}"
+                                     alt="${altText}"
+                                     class="rounded border"
+                                     style="width: 120px; height: 100px; object-fit: cover;"
+                                     onerror="this.onerror=null;this.src='/assets/img/logo.jpg';">
+                            `;
+                        }
+                    },
                     {
                         data: null,
                         render: function(data, type, row) {
@@ -64,7 +89,7 @@
                                 <span class="small"><b>Immatriculation</b> : ${registrationNumber}</span><br>
                                 <span class="small"><b>Model</b> : ${model}</span><br>
                                 <span class="small"><b>Marque</b> : ${brand}</span><br>
-                                <span class="small"><b>Equipements</b> <i class='bi bi-tools text-primary' style='cursor: pointer; margin: 0 5px'></i></span><br>
+                                <span class="small"><b>Equipements</b> <i class='bi bi-tools text-primary openEquipmentModal' data-bs-toggle='modal' data-bs-target='#equipment' data-id='${row.id}' style='cursor: pointer; margin: 0 5px'></i></span><br>
                             `;
                         }
                     },
@@ -125,12 +150,9 @@
                     {
                         data: null,
                         render: function(data, type, row) {
-                            let item1 = '<i class="bi bi-pencil-fill text-warning pr-5 pl-5 openUpdModal" data-bs-toggle="modal" data-bs-target="#upd" data-id="'+row.id+'" style="cursor: pointer; margin: 0 5px"></i>';
-                            let item3 = '<i class="bi bi-cone-striped text-primary pr-5 pl-5 maintenanceModal" data-bs-toggle="modal" data-bs-target="#maintenance" data-id="'+row.id+'" style="cursor: pointer; margin: 0 5px"></i>';
-                            let item2 = '<i class="bi bi-trash-fill text-danger pl-5" style="cursor: pointer; margin: 0 5px"></i>';
-                            let items = item1+' '+item3;
-
-                            return items;
+                            let item1 = '<i class="bi bi-pencil-fill text-warning pr-5 pl-5 openUpdModal" sec:authorize="hasAnyRole(\'MANAGER\', \'AGENT\')" data-bs-toggle="modal" data-bs-target="#upd" data-id="'+row.id+'" style="cursor: pointer; margin: 0 5px"></i>';
+                            let item3 = '<i class="bi bi-cone-striped text-primary pr-5 pl-5 maintenanceModal" sec:authorize="hasAnyRole(\'MANAGER\', \'AGENT\')" data-bs-toggle="modal" data-bs-target="#maintenance" data-id="'+row.id+'" style="cursor: pointer; margin: 0 5px"></i>';
+                            return item1 + ' ' + item3;
                         }
                     },
                 ]

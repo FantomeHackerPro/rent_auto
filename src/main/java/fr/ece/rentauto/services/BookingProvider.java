@@ -41,7 +41,7 @@ public class BookingProvider implements BookingService {
 
     @Transactional
     @Override
-    public void addBooking(BookingRequestDTO request) throws AppException {
+    public BookingEntity addBooking(BookingRequestDTO request) throws AppException {
 
         BookingEntity bookingToAdd = BookingMapper.mapToBookingToAdd(request);
         VehicleEntity vehicle = vehicleService.getVehicle(request.getVehicleId());
@@ -58,7 +58,7 @@ public class BookingProvider implements BookingService {
 
         bookingToAdd.setContract(contractToAdd);
 
-        this.bookingRepository.save(bookingToAdd);
+        return this.bookingRepository.save(bookingToAdd);
     }
 
     @Transactional

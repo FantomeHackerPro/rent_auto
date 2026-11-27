@@ -2,11 +2,10 @@ package fr.ece.rentauto.controllers.api;
 
 import fr.ece.rentauto.configs.AppException;
 import fr.ece.rentauto.configs.ResponseMessage;
-import fr.ece.rentauto.controllers.dtos.AmountEstimationRequestDTO;
-import fr.ece.rentauto.controllers.dtos.BookingPayloadRequestDTO;
-import fr.ece.rentauto.controllers.dtos.BookingRequestDTO;
-import fr.ece.rentauto.controllers.dtos.BookingResponseDTO;
+import fr.ece.rentauto.controllers.dtos.*;
+import fr.ece.rentauto.domaines.entities.BookingEntity;
 import fr.ece.rentauto.domaines.mappers.BookingMapper;
+import fr.ece.rentauto.domaines.mappers.ContractMapper;
 import fr.ece.rentauto.services.BookingService;
 import fr.ece.rentauto.services.ContractService;
 import lombok.AllArgsConstructor;
@@ -60,19 +59,20 @@ public class BookingController {
 
     @PostMapping("/create")
     public ResponseMessage<?> addBooking(@RequestBody BookingRequestDTO request) throws AppException {
-        this.bookingService.addBooking(request);
+        BookingEntity booking = this.bookingService.addBooking(request);
         int code = HttpStatus.CREATED.value();
-        ResponseMessage<BookingResponseDTO> response = new ResponseMessage<>();
+        ResponseMessage<ContractResponseDTO> response = new ResponseMessage<>();
         response.setMessage("Booking has been created successfully");
         response.setStatus(code);
         response.setCode(code);
+        response.getData().add(ContractMapper.mapToContractResponse(booking.getContract()));
         return response;
     }
 
     @PutMapping("{id}/update")
     public ResponseMessage<?> updateBooking(@PathVariable Long id, @RequestBody BookingRequestDTO request) throws AppException {
         this.bookingService.updateBooking(id, request);
-        int code = HttpStatus.CREATED.value();
+        int code = HttpStatus.OK.value();
         ResponseMessage<BookingResponseDTO> response = new ResponseMessage<>();
         response.setMessage("Booking has been updated successfully");
         response.setStatus(code);

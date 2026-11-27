@@ -75,7 +75,7 @@ public class PaymentController {
     @PutMapping("{id}/update")
     public ResponseMessage<?> updatePayment(@PathVariable Long id, @RequestBody PaymentRequestDTO request) throws AppException {
         paymentService.updatePayment(id, request);
-        int code = HttpStatus.CREATED.value();
+        int code = HttpStatus.OK.value();
         ResponseMessage<PaymentResponseDTO> response = new ResponseMessage<>();
         response.setMessage("Payment has been updated successfully");
         response.setStatus(code);

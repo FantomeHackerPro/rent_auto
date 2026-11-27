@@ -1,6 +1,8 @@
 package fr.ece.rentauto.domaines.enumerations;
 
-public enum UserType {
-    STAFF,
+public enum UserRole {
+    ADMIN,
+    MANAGER,
+    AGENT,
     CUSTOMER,
 }

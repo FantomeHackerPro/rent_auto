@@ -1,0 +1,100 @@
+<div class="container">
+
+    <div class="row">
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${vehicleListTitle}">Liste</h5>
+
+                <div>
+                    <table class="table table-striped " id="vehicleItems">
+                        <thead>
+                        <tr>
+                            <th>Infos véhicule</th>
+                            <th>Tarif journalier</th>
+                            <th>Année</th>
+                            <th>Statut</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+    $(document).on('click', '.openVehicleModal', function() {
+        const data = itemData.find(item => item.id === parseInt($(this).attr('data-id'), 10));
+
+        $("#vehicleItems").DataTable({
+            data: data.vehicles,
+            destroy: true,
+            columns: [
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        let registrationNumber = row.registerNumber ? row.registerNumber : "";
+                        let brand = row.brand ? row.brand.toUpperCase() : "";
+                        let model = row.model ? row.model.toUpperCase() : "";
+                        return `
+                                <span class="small"><b>Immatriculation</b> : ${registrationNumber}</span><br>
+                                <span class="small"><b>Model</b> : ${model}</span><br>
+                                <span class="small"><b>Marque</b> : ${brand}</span><br>
+                            `;
+                    }
+                },
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        return `
+                                <span class="badge bg-primary">${row.dailyRate} €</span>
+                            `;
+                    }
+                },
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        return `
+                                <span class="badge bg-primary">${row.year}</span>
+                            `;
+                    }
+                },
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        let status = row.status ? row.status : "";
+                        let bgColor;
+                        let label;
+
+                        switch (status) {
+                            case "AVAILABLE":
+                                bgColor = "bg-success";
+                                label = "Disponible";
+                                break;
+                            case "RENT":
+                                bgColor = "bg-primary";
+                                label = "Loué";
+                                break;
+                            case "IN_MAINTENANCE":
+                                bgColor = "bg-warning text-dark";
+                                label = "En Maintenance";
+                                break;
+                            default:
+                                bgColor = "bg-secondary";
+                                label = status || "Unknown";
+                        }
+
+                        return `
+                                <span class="badge ${bgColor}">${label}</span>
+                            `;
+                    }
+                },
+            ]
+        });
+
+    });
+</script>

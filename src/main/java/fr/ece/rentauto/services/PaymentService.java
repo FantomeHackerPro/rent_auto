@@ -10,7 +10,7 @@ public interface PaymentService {
     List<PaymentEntity> getPayments();
     List<PaymentEntity> getPayments(Long contractId);
     PaymentEntity getPayment(Long id) throws AppException;
-    void  addPayment(PaymentRequestDTO request);
+    void  addPayment(PaymentRequestDTO request) throws AppException;
     void updatePayment(Long id, PaymentRequestDTO request) throws AppException;
     void deletePayment(Long id);
 }

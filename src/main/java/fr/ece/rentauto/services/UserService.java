@@ -7,6 +7,7 @@ import fr.ece.rentauto.controllers.dtos.UserRequestDTO;
 import java.util.List;
 
 public interface UserService {
+    void initializeManager();
     List<UserEntity> getUsers();
     UserEntity getUser(Long id) throws AppException;
     void addUser(UserRequestDTO request) throws AppException;

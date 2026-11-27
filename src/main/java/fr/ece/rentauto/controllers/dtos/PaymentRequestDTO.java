@@ -25,4 +25,7 @@ public class PaymentRequestDTO {
 
     private PaymentStatus status;
 
+    @NotNull
+    private Long contractId;
+
 }

@@ -1,6 +1,6 @@
 package fr.ece.rentauto.domaines.entities;
 
-import fr.ece.rentauto.domaines.enumerations.UserType;
+import fr.ece.rentauto.domaines.enumerations.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +29,7 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserType type;
+    private UserRole role;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private StaffEntity staff;

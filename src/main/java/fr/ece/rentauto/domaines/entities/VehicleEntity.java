@@ -42,7 +42,11 @@ public class VehicleEntity {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal dailyRate;
 
+    @Column(nullable = false)
     private int year;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -77,5 +81,17 @@ public class VehicleEntity {
     public void addEquipments(List<EquipmentEntity> equipments) {
         this.equipments.addAll(equipments);
 //        equipments.forEach(equipment -> equipment.getVehicles().add(this));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof VehicleEntity that)) return false;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

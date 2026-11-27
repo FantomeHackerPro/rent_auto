@@ -1,4 +1,4 @@
-<section class="section" xmlns:th="http://www.thymeleaf.org">
+<section class="section" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
@@ -41,6 +41,9 @@
     <script th:inline="javascript">
         let itemData = /*[[${data}]]*/ [];
         console.log(itemData);
+
+        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
         $(document).ready(function() {
             $("#items").DataTable({

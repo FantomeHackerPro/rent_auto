@@ -40,7 +40,7 @@ public class BookingMapper {
         response.setStatus(booking.getStatus());
         response.setCustomer(CustomerMapper.mapToCustomerSummaryResponse(booking.getCustomer()));
         response.setContract(ContractMapper.mapToContractSummaryResponse(booking.getContract()));
-        response.setVehicle(VehicleMapper.mapToVehicleSummaryResponse(booking.getVehicle()));
+        response.setVehicle(VehicleMapper.mapToVehicleResponse(booking.getVehicle()));
         return response;
     }
 

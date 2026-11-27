@@ -1,0 +1,107 @@
+<div class="container">
+
+    <div class="row">
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${bookingListTitle}">Liste</h5>
+
+                <div>
+                    <table class="table table-striped " id="bookingItems">
+                        <thead>
+                            <tr>
+                                <th>Information sur le véhicule</th>
+                                <th>Date début</th>
+                                <th>Date fin</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+    $(document).on('click', '.openBookingModal', function() {
+        const data = itemData.find(item => item.id === parseInt($(this).attr('data-id'), 10));
+
+        $("#bookingItems").DataTable({
+            data: data.bookings,
+            destroy: true,
+            columns: [
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        let vehicle = row.vehicle;
+                        let registrationNumber = vehicle.registerNumber ? vehicle.registerNumber : "";
+                        let brand = vehicle.brand ? vehicle.brand.toUpperCase() : "";
+                        let model = vehicle.model ? vehicle.model.toUpperCase() : "";
+
+                        return `
+                                <span class="small"><b>Immatriculation</b> : ${registrationNumber}</span><br>
+                                <span class="small"><b>Model</b> : ${model}</span><br>
+                                <span class="small"><b>Marque</b> : ${brand}</span><br>
+                            `;
+                    }
+                },
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        return `
+                                <span class="badge bg-primary">${row.startDate}</span>
+                            `;
+                    }
+                },
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        return `
+                                <span class="badge bg-primary">${row.endDate}</span>
+                            `;
+                    }
+                },
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        let status = row.status ? row.status : "";
+                        let bgColor;
+                        let label;
+
+                        switch (status) {
+                            case "PENDING":
+                                bgColor = "bg-warning";
+                                label = "En cours";
+                                break;
+                            case "CONFIRMED":
+                                bgColor = "bg-primary";
+                                label = "Confirmé";
+                                break;
+                            case "CANCELLED":
+                                bgColor = "bg-danger text-dark";
+                                label = "Annulé";
+                                break;
+                            case "FINISHED":
+                                bgColor = "bg-success text-dark";
+                                label = "Terminé";
+                                break;
+                            default:
+                                bgColor = "bg-secondary";
+                                label = status || "Unknown";
+                        }
+
+                        return `
+                                <span class="badge ${bgColor}">${label}</span>
+                            `;
+                    }
+                },
+            ]
+        });
+
+    });
+</script>

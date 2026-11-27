@@ -4,6 +4,8 @@ import fr.ece.rentauto.configs.AppException;
 import fr.ece.rentauto.domaines.entities.CustomerEntity;
 import fr.ece.rentauto.domaines.entities.StaffEntity;
 import fr.ece.rentauto.domaines.entities.UserEntity;
+import fr.ece.rentauto.domaines.enumerations.StaffRole;
+import fr.ece.rentauto.domaines.enumerations.UserRole;
 import fr.ece.rentauto.domaines.mappers.UserMapper;
 import fr.ece.rentauto.repositories.CustomerRepository;
 import fr.ece.rentauto.repositories.StaffRepository;
@@ -15,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -25,6 +28,22 @@ public class UserProvider implements UserService {
     private CustomerRepository customerRepository;
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
+
+    @Override
+    public void initializeManager() {
+        if (userRepository.existsByRole(UserRole.ADMIN)) {
+            return;
+        }
+
+        UserEntity user = new UserEntity();
+        user.setPassword(passwordEncoder.encode("admin"));
+        user.setLogin("admin");
+        user.setRole(UserRole.ADMIN);
+        user.setUsername("Admin");
+
+        userRepository.save(user);
+
+    }
 
     @Override
     public List<UserEntity> getUsers() {

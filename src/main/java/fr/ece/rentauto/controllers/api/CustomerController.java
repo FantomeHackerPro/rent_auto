@@ -4,6 +4,7 @@ import fr.ece.rentauto.configs.AppException;
 import fr.ece.rentauto.configs.ResponseMessage;
 import fr.ece.rentauto.controllers.dtos.CustomerRequestDTO;
 import fr.ece.rentauto.controllers.dtos.CustomerResponseDTO;
+import fr.ece.rentauto.domaines.entities.CustomerEntity;
 import fr.ece.rentauto.domaines.mappers.CustomerMapper;
 import fr.ece.rentauto.services.CustomerService;
 import lombok.AllArgsConstructor;
@@ -51,12 +52,13 @@ public class CustomerController {
 
     @PostMapping("/create")
     public ResponseMessage<?> createCustomer(@RequestBody CustomerRequestDTO request) throws AppException {
-        customerService.addCustomer(request);
-        int code = HttpStatus.OK.value();
+        CustomerEntity customer = customerService.addCustomer(request);
+        int code = HttpStatus.CREATED.value();
         ResponseMessage<CustomerResponseDTO> response = new ResponseMessage<>();
         response.setMessage("Customer has been created successfully.");
         response.setStatus(code);
         response.setCode(code);
+        response.getData().add(CustomerMapper.mapToCustomerResponse(customer));
         return response;
     }
 

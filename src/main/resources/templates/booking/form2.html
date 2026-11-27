@@ -1,0 +1,29 @@
+<div class="form-step" data-step="2" th:fragment="form2">
+    <h6 class="fw-bold mb-3 text-primary"><i class="bi bi-person-vcard me-2"></i>Informations du conducteur</h6>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input class="form-control" id="floatingName" name="name" placeholder="Nom" required type="text">
+                <label for="floatingName">Nom <i class="text-danger">*</i></label>
+                <div class="invalid-feedback">Veuillez saisir le nom de l'agence.</div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input class="form-control" id="floatingSurname" name="surname" placeholder="Prénom" required
+                       type="text">
+                <label for="floatingSurname">Prénom <i class="text-danger">*</i></label>
+                <div class="invalid-feedback">Veuillez saisir le prénom.</div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="form-floating">
+                <input class="form-control" id="floatingEmail" name="email" placeholder="Email" required type="email">
+                <label for="floatingEmail">Email <i class="text-danger">*</i></label>
+                <div class="invalid-feedback">Veuillez saisir l'adresse mail.</div>
+            </div>
+        </div>
+    </div>
+</div>

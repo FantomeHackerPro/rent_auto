@@ -27,3 +27,12 @@ spring:
 
 server:
   port: 8080              # Port sur lequel votre application va démarrer
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    prometheus:
+      enabled: true

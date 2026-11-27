@@ -63,7 +63,7 @@ public class UserController {
     @PutMapping("{id}/update")
     public ResponseMessage<?> updateUser(@PathVariable Long id, @RequestBody UserRequestDTO request) throws AppException {
         userService.updateUser(id, request);
-        int code = HttpStatus.CREATED.value();
+        int code = HttpStatus.OK.value();
         ResponseMessage<UserResponseDTO> response = new ResponseMessage<>();
         response.setMessage("User has been updated successfully");
         response.setStatus(code);

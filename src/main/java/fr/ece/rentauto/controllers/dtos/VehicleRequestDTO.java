@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -41,7 +42,8 @@ public class VehicleRequestDTO {
     @NotNull
     private Long agencyId;
 
-    @NotEmpty
     private List<Long> equipmentIds;
+
+    private MultipartFile image;
 
 }

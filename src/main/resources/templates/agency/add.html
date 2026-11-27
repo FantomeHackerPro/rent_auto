@@ -82,9 +82,6 @@
             phone: $addForm.find('input[name="phone"]').val().trim()
         };
 
-        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
         $.ajax({
             url: '/api/agencies/create', // Ajout du '/' initial
             type: 'POST',
@@ -94,15 +91,15 @@
             beforeSend: function() {
                 $('#add #cancelBtn').prop('disabled', true);
                 $('#add #submitBtn').prop('disabled', true).html(`
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Enregistrement...
-            `);
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Enregistrement...
+                `);
             },
             success: function(response) {
-                alerts("L'agence a été créée avec succès !", 'alert-success', 'bi-check-circle', 2000);
+                alerts("L'agence a été créée avec succès !", 'alert-success', 'bi-check-circle', 1500);
                 setTimeout(function() {
                     location.reload();
-                }, 2000);
+                }, 1500);
             },
             error: function(xhr, status, error) {
                 const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'enregistrement.";

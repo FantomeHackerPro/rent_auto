@@ -14,7 +14,7 @@ public class UserMapper {
         user.setUsername(request.getUsername());
         user.setLogin(request.getLogin());
         user.setPassword(request.getPassword());
-        user.setType(request.getUserType());
+        user.setRole(request.getUserRole());
         return user;
     }
 
@@ -33,7 +33,7 @@ public class UserMapper {
         response.setLogin(user.getLogin());
         response.setPassword(user.getPassword());
         response.setUsername(user.getUsername());
-        response.setType(user.getType());
+        response.setType(user.getRole());
         response.setStaff(StaffMapper.mapToStaffSummaryResponse(user.getStaff()));
         response.setCustomer(CustomerMapper.mapToCustomerSummaryResponse(user.getCustomer()));
         return response;
@@ -47,7 +47,7 @@ public class UserMapper {
         response.setLogin(user != null ? user.getLogin() : null);
         response.setPassword(user != null ? user.getPassword() : null);
         response.setUsername(user != null ? user.getUsername() : null);
-        response.setType(user != null ? user.getType() : null);
+        response.setType(user != null ? user.getRole() : null);
         return response;
     }
 

@@ -4,7 +4,7 @@ import fr.ece.rentauto.configs.AppException;
 import fr.ece.rentauto.controllers.dtos.UserRequestDTO;
 import fr.ece.rentauto.domaines.entities.CustomerEntity;
 import fr.ece.rentauto.controllers.dtos.CustomerRequestDTO;
-import fr.ece.rentauto.domaines.enumerations.UserType;
+import fr.ece.rentauto.domaines.enumerations.UserRole;
 import fr.ece.rentauto.domaines.mappers.CustomerMapper;
 import fr.ece.rentauto.repositories.CustomerRepository;
 import lombok.AllArgsConstructor;
@@ -33,18 +33,19 @@ public class CustomerProvider implements CustomerService{
 
     @Transactional
     @Override
-    public void addCustomer(CustomerRequestDTO request) throws AppException {
+    public CustomerEntity addCustomer(CustomerRequestDTO request) throws AppException {
         CustomerEntity customer = customerRepository.save(CustomerMapper.mapToCustomerToAdd(request));
 
         if (request.isHasAccount()) {
             UserRequestDTO userRequest = new UserRequestDTO();
-            userRequest.setStaffId(customer.getId());
+            userRequest.setCustomerId(customer.getId());
             userRequest.setLogin(customer.getEmail());
             userRequest.setUsername(customer.getName());
-            userRequest.setUserType(UserType.CUSTOMER);
+            userRequest.setUserRole(UserRole.CUSTOMER);
 
             userService.addUser(userRequest);
         }
+        return customer;
     }
 
     @Transactional
