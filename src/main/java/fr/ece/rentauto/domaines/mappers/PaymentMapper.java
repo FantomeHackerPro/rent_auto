@@ -3,6 +3,7 @@ package fr.ece.rentauto.domaines.mappers;
 import fr.ece.rentauto.domaines.entities.PaymentEntity;
 import fr.ece.rentauto.controllers.dtos.PaymentRequestDTO;
 import fr.ece.rentauto.controllers.dtos.PaymentResponseDTO;
+import fr.ece.rentauto.domaines.enumerations.PaymentMode;
 import fr.ece.rentauto.domaines.enumerations.PaymentStatus;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ public class PaymentMapper {
         payment.setAmount(request.getAmount());
         payment.setPaymentDate(request.getPaymentDate());
         payment.setPaymentMode(request.getPaymentMode());
-        payment.setStatus(PaymentStatus.PENDING);
+        payment.setStatus(request.getPaymentMode().equals(PaymentMode.CASH) ? PaymentStatus.CONFIRMED : PaymentStatus.PENDING);
         payment.setCreatedAt(LocalDateTime.now());
         return payment;
     }

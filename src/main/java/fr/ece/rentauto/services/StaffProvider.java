@@ -4,7 +4,8 @@ import fr.ece.rentauto.configs.AppException;
 import fr.ece.rentauto.controllers.dtos.UserRequestDTO;
 import fr.ece.rentauto.domaines.entities.StaffEntity;
 import fr.ece.rentauto.controllers.dtos.StaffRequestDTO;
-import fr.ece.rentauto.domaines.enumerations.UserType;
+import fr.ece.rentauto.domaines.enumerations.StaffRole;
+import fr.ece.rentauto.domaines.enumerations.UserRole;
 import fr.ece.rentauto.domaines.mappers.StaffMapper;
 import fr.ece.rentauto.repositories.StaffRepository;
 import lombok.AllArgsConstructor;
@@ -39,12 +40,13 @@ public class StaffProvider implements StaffService{
         staffToAdd.setAgency(this.agencyService.getAgency(request.getAgencyId()));
         this.staffRepository.save(staffToAdd);
 
+        UserRole role = request.getRole().equals(StaffRole.AGENT) ? UserRole.AGENT :  UserRole.MANAGER;
         if (request.isHasAccount()) {
             UserRequestDTO userRequest = new UserRequestDTO();
             userRequest.setStaffId(staffToAdd.getId());
             userRequest.setLogin(staffToAdd.getEmail());
             userRequest.setUsername(staffToAdd.getName());
-            userRequest.setUserType(UserType.STAFF);
+            userRequest.setUserRole(role);
 
             userService.addUser(userRequest);
         }

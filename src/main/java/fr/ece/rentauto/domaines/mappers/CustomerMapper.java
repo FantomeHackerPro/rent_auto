@@ -35,7 +35,7 @@ public class CustomerMapper {
         response.setEmail(customer.getEmail());
         response.setName(customer.getName());
         response.setPhone(customer.getPhone());
-        response.setBookings(BookingMapper.mapToBookingSummaryResponseList(customer.getBookings()));
+        response.setBookings(BookingMapper.mapToBookingResponseList(customer.getBookings()));
         return response;
     }
 

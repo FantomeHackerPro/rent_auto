@@ -1,0 +1,50 @@
+<div class="container">
+
+    <div class="row">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${staffListTitle}">Liste</h5>
+
+                <div>
+                    <table class="table table-striped " id="staffItems">
+                        <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+    $(document).on('click', '.openStaffModal', function() {
+        const data = itemData.find(item => item.id === parseInt($(this).attr('data-id'), 10));
+
+        $("#staffItems").DataTable({
+            data: data.staffs,
+            destroy: true,
+            columns: [
+                {data: 'name'},
+                {data: 'surname'},
+                {data: 'email'},
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        return `
+                                <span class="badge bg-primary" style="text-transform: capitalize">${row.role}</span>
+                            `;
+                    }
+                }
+            ]
+        });
+
+    });
+</script>

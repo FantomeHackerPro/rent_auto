@@ -63,7 +63,7 @@ public class AgencyController {
     @PutMapping("{id}/update")
     public ResponseMessage<?> updateAgency(@PathVariable Long id, @RequestBody AgencyRequestDTO request) throws AppException {
         agencyService.updateAgency(id, request);
-        int code = HttpStatus.CREATED.value();
+        int code = HttpStatus.OK.value();
         ResponseMessage<AgencyResponseDTO> response = new ResponseMessage<>();
         response.setMessage("Agency has been updated successfully");
         response.setStatus(code);

@@ -54,9 +54,6 @@
 </div>
 
 <script th:inline="javascript">
-    const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-    const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
     $(document).on('click', '.maintenanceModal', function() {
         const data = itemData.find(item => item.id === parseInt($(this).attr('data-id'), 10));
 

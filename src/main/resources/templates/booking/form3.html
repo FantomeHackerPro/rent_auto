@@ -1,0 +1,45 @@
+<div class="form-step" data-step="3" th:fragment="form3">
+    <h6 class="fw-bold mb-3 text-primary"><i class="bi bi-credit-card me-2"></i>Paiement de la réservation</h6>
+
+    <div class="alert alert-primary bg-primary-subtle border-0 d-flex justify-content-between align-items-center mb-3">
+        <span>Montant à régler :</span>
+        <strong class="fs-5" id="paymentAmountDisplay">0 €</strong>
+    </div>
+
+    <div class="row g-3">
+
+        <div class="col-md-4">
+            <div class="form-floating">
+                <input class="form-control" id="floatingAmount" name="amount" placeholder="Montant" required
+                       type="text">
+                <label for="floatingAmount">Montant <i class="text-danger">*</i></label>
+                <div class="invalid-feedback">Veuillez saisir la montant.</div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-floating">
+                <select aria-label="floatingPaymentMode" class="form-select" data-placeholder=""
+                        id="floatingPaymentMode" name="paymentMode" required>
+                    <option></option>
+                    <option th:each="m : ${paymentModes}"
+                            th:text="${m}"
+                            th:value="${m}">
+                    </option>
+                </select>
+                <label for="floatingPaymentMode">Moyen de paiement <i class="text-danger">*</i></label>
+                <div class="invalid-feedback">Veuillez sélectionner un mode paiement.</div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-floating">
+                <input class="form-control" id="floatingPaymentDate" name="paymentDate" placeholder="Date de paiement"
+                       required type="date">
+                <label for="floatingPaymentDate">Date de paiement <i class="text-danger">*</i></label>
+                <div class="invalid-feedback">Veuillez renseigner la date de paiement.</div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

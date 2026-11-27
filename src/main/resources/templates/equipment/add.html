@@ -40,9 +40,6 @@
             label: $addForm.find('input[name="label"]').val().trim(),
         };
 
-        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
         $.ajax({
             url: '/api/equipments/create',
             type: 'POST',
@@ -57,8 +54,8 @@
                 `);
             },
             success: function() {
-                alerts("L'équipement a été créé avec succès !", 'alert-success', 'bi-check-circle', 2000);
-                setTimeout(() => location.reload(), 2000);
+                alerts("L'équipement a été créé avec succès !", 'alert-success', 'bi-check-circle', 1500);
+                setTimeout(() => location.reload(), 1500);
             },
             error: function(xhr, status, error) {
                 const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'enregistrement.";

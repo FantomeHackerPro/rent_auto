@@ -91,10 +91,10 @@
         $staffContainer.addClass('d-none');
 
         // Adapter 'STAFF' et 'CUSTOMER' selon les valeurs exactes de votre enum ${userTypes}
-        if (selectedType === 'STAFF') {
+        if (selectedType === 'AGENT' || selectedType === 'MANAGER') {
             $staffContainer.removeClass('d-none');
             $staffSelect.prop('required', true);
-        } else if (selectedType === 'CUSTOMER') {
+        } else {
             $customerContainer.removeClass('d-none');
             $customerSelect.prop('required', true);
         }
@@ -128,9 +128,6 @@
             customerId: customerVal || null  // Envoie null au lieu de "" si non sélectionné
         };
 
-        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
         $.ajax({
             url: '/api/users/create',
             type: 'POST',
@@ -145,10 +142,10 @@
             `);
             },
             success: function(response) {
-                alerts("L'utilisateur a été créé avec succès !", 'alert-success', 'bi-check-circle', 2000);
+                alerts("L'utilisateur a été créé avec succès !", 'alert-success', 'bi-check-circle', 1500);
                 setTimeout(function() {
                     location.reload();
-                }, 2000);
+                }, 1500);
             },
             error: function(xhr, status, error) {
                 const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'enregistrement.";

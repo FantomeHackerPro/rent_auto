@@ -36,4 +36,16 @@ public class EquipmentEntity {
     @ManyToMany(mappedBy = "equipments")
     private Set<VehicleEntity> vehicles = new HashSet<>();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EquipmentEntity that)) return false;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
 }

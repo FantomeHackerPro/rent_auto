@@ -1,0 +1,273 @@
+<style>
+    /* Stepper 3 étapes */
+    .stepper-wrapper {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    .stepper-wrapper::before {
+        content: "";
+        position: absolute;
+        top: 20px;
+        left: 16%;
+        right: 16%;
+        height: 2px;
+        background-color: #dee2e6;
+        z-index: 0;
+    }
+    .stepper-item {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        text-align: center;
+    }
+    .stepper-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #fff;
+        border: 2px solid #dee2e6;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        transition: all 0.25s ease;
+    }
+    .stepper-label {
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: #6c757d;
+    }
+    .stepper-item.active .stepper-circle {
+        border-color: #0d6efd;
+        background-color: #0d6efd;
+        color: #fff;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+    }
+    .stepper-item.active .stepper-label {
+        color: #0d6efd;
+        font-weight: 600;
+    }
+    .stepper-item.completed .stepper-circle {
+        border-color: #198754;
+        background-color: #198754;
+        color: #fff;
+    }
+    .stepper-item.completed .stepper-label {
+        color: #198754;
+    }
+    .form-step {
+        display: none;
+    }
+    .form-step.active {
+        display: block;
+    }
+</style>
+<div class="modal-content" th:fragment="addModal" xmlns:th="http://www.thymeleaf.org">
+    <div class="modal-header text-black bg-light">
+        <h5 class="modal-title" th:text="${addModalTitle}">Title</h5>
+    </div>
+    <div class="modal-body">
+
+        <div class="stepper-wrapper" id="bookingStepper">
+            <div class="stepper-item active" data-step="1">
+                <div class="stepper-circle">1</div>
+                <div class="stepper-label">Formulaire de réservation</div>
+            </div>
+            <div class="stepper-item" data-step="2">
+                <div class="stepper-circle">2</div>
+                <div class="stepper-label">Formulaire des infos du client</div>
+            </div>
+            <div class="stepper-item" data-step="3">
+                <div class="stepper-circle">3</div>
+                <div class="stepper-label">Formulaire du paiement</div>
+            </div>
+        </div>
+
+        <form id="add-form" class="needs-validation" novalidate>
+            <div class="container">
+                <!-- ÉTAPE 1 : Formulaire de réservation -->
+                <div th:replace="~{booking/form1 :: form1}"></div>
+
+                <!-- ÉTAPE 2 : Formulaire des infos du client -->
+                <div th:replace="~{booking/form2 :: form2}"></div>
+
+                <!-- ÉTAPE 3 : Formulaire du paiement -->
+                <div th:replace="~{booking/form3 :: form3}"></div>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-footer bg-light d-flex justify-content-between">
+        <div>
+            <button class="btn btn-outline-secondary" data-bs-dismiss="modal" id="cancelBookingBtn" type="button">
+                Annuler
+            </button>
+            <button class="btn btn-secondary d-none" id="prevStepBtn" type="button">
+                <i class="bi bi-arrow-left me-1"></i> Précédent
+            </button>
+        </div>
+
+        <div>
+            <button class="btn btn-primary" id="nextStepBtn" type="button">
+                Suivant <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+            <button class="btn btn-success d-none" id="submitBtn" type="button">
+                <i class="bi bi-check-circle me-1"></i> Confirmer la réservation
+            </button>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    let currentStep = 1;
+    const totalSteps = 3;
+    let vehicleId;
+    function updateStepUI() {
+        $('.form-step').removeClass('active');
+        $(`.form-step[data-step="${currentStep}"]`).addClass('active');
+
+        $('.stepper-item').each(function () {
+            const stepNum = parseInt($(this).data('step'), 10);
+            $(this).removeClass('active completed');
+            if (stepNum < currentStep) {
+                $(this).addClass('completed');
+            } else if (stepNum === currentStep) {
+                $(this).addClass('active');
+            }
+        });
+
+        const form = document.getElementById('add-form');
+        if (form) {
+            $(form).removeClass('was-validated');
+        }
+
+        $('#prevStepBtn').toggleClass('d-none', currentStep === 1);
+        $('#nextStepBtn').toggleClass('d-none', currentStep === totalSteps);
+        $('#submitBtn').toggleClass('d-none', currentStep !== totalSteps);
+    }
+
+    function validateCurrentStep() {
+        const form = document.getElementById('add-form');
+        if (!form) {
+            console.error('Form add-form not found in the DOM.');
+            return false;
+        }
+
+        const $addForm = $(form);
+        const $currentStepEl = $addForm.find(`.form-step[data-step="${currentStep}"]`);
+
+        // Contrôle de cohérence des dates à l'étape 1
+        if (currentStep === 1) {
+            const startInput = $currentStepEl.find('input[name="startDate"]')[0];
+            const endInput = $currentStepEl.find('input[name="endDate"]')[0];
+
+            if (startInput && endInput) {
+                if (startInput.value && endInput.value && new Date(endInput.value) < new Date(startInput.value)) {
+                    endInput.setCustomValidity('Date de fin antérieure à la date de début');
+                } else {
+                    endInput.setCustomValidity('');
+                }
+            }
+        }
+
+        // Vérifie uniquement les champs actifs et non désactivés de l'étape courante
+        let isStepValid = true;
+        $currentStepEl.find('input, select, textarea').each(function () {
+            if (!this.disabled && !this.checkValidity()) {
+                isStepValid = false;
+            }
+        });
+
+        $currentStepEl.addClass('was-validated');
+
+        if (!isStepValid) {
+            if (typeof alerts === 'function') {
+                alerts('Veuillez remplir tous les champs de saisie ayant des (<b class="text-danger">*</b>)');
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    $('#nextStepBtn').on('click', function () {
+        if (!validateCurrentStep()) {
+            return;
+        }
+        if (currentStep < totalSteps) {
+            currentStep++;
+            updateStepUI();
+        }
+    });
+
+    $('#prevStepBtn').on('click', function () {
+        if (currentStep > 1) {
+            currentStep--;
+            updateStepUI();
+        }
+    });
+
+    $(document).on('change', '#add select[name="vehicleId"]', function(e) {
+        e.preventDefault();
+        vehicleId = (this).val();
+    });
+
+    $(document).on('click', '#add #estimationBtn, #estimationBtn', function(e) {
+        e.preventDefault();
+
+        const form = document.getElementById('add-form');
+        if (!form) {
+            console.error('Form add-form not found in the DOM.');
+            return;
+        }
+
+        const $addForm = $(form);
+        $addForm.addClass('was-validated');
+
+        let vehiclesData = /*[[${vehicles}]]*/ [];
+        let vehicle = vehiclesData.find(item => item.id === parseInt(vehicleId, 10));
+        console.log(vehicle);
+        let amount = vehicle.dailyRate;
+        $("#add-form").find("#paymentAmountDisplay").text(amount+" €");
+
+        const request = {
+            startDate: $addForm.find('input[name="startDate"]').val(),
+            endDate: $addForm.find('input[name="endDate"]').val(),
+            amount: amount
+        };
+
+        $.ajax({
+            url: '/api/bookings/estimation',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: token && header ? { [header]: token } : {},
+            data: JSON.stringify(request),
+            beforeSend: function() {
+                $('#add #estimationBtn').prop('disabled', true).html(`
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Estimation...
+            `);
+            },
+            success: function(response) {
+                console.log(response);
+                $('input[name="price"]').val(response.data[0]);
+                $('#add #estimationBtn').prop('disabled', false).text('Estimer');
+            },
+            error: function(xhr, status, error) {
+                const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'estimation.";
+                if (typeof alerts === 'function') {
+                    alerts(serverMessage);
+                }
+                console.error("Erreur lors de l'estimation :", xhr.responseText || error);
+                $('#add #estimationBtn').prop('disabled', false).text('Estimer');
+            }
+        });
+    });
+</script>

@@ -4,5 +4,6 @@ public enum VehicleCategory {
     CITADINE,
     BERLINE,
     SUV,
-    UTILITAIRE
+    UTILITAIRE,
+    MOTORCYCLE
 }

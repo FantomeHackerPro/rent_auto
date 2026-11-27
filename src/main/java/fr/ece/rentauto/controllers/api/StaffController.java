@@ -54,7 +54,7 @@ public class StaffController {
     @PostMapping("/create")
     public ResponseMessage<?> createStaff(@RequestBody StaffRequestDTO request) throws AppException {
         staffService.addStaff(request);
-        int code = HttpStatus.OK.value();
+        int code = HttpStatus.CREATED.value();
         ResponseMessage<?> response = new ResponseMessage<>();
         response.setMessage("Staff has been created successfully.");
         response.setStatus(code);

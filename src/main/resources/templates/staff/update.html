@@ -109,9 +109,6 @@
             agencyId: $udpForm.find('select[name="agencyId"]').val().trim()
         };
 
-        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
         $.ajax({
             url: `/api/staffs/${staffId}/update`,
             type: 'PUT',
@@ -126,10 +123,10 @@
             `);
             },
             success: function(response) {
-                alerts("L'agence a été mise à jour avec succès !", 'alert-success', 'bi-check-circle', 2000);
+                alerts("L'agence a été mise à jour avec succès !", 'alert-success', 'bi-check-circle', 1500);
                 setTimeout(function() {
                     location.reload();
-                }, 2000);
+                }, 1500);
             },
             error: function(xhr, status, error) {
                 // Récupérer le message d'erreur du backend (Spring Boot / API) s'il existe

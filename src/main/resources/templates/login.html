@@ -55,8 +55,8 @@
                                         <label for="yourUsername" class="form-label">Login</label>
                                         <div class="input-group has-validation">
                                             <span class="input-group-text" id="inputGroupPrepend">@</span>
-                                            <input type="text" name="username" class="form-control" id="yourUsername" required>
-                                            <div class="invalid-feedback">Please enter your username.</div>
+                                            <input type="text" name="login" class="form-control" id="yourUsername" required>
+                                            <div class="invalid-feedback">Please enter your login.</div>
                                         </div>
                                     </div>
 
@@ -106,6 +106,10 @@
 </html>
 <script src="assets/js/jquery.min.js"></script>
 <script>
+
+    const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+    const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
     $('#login').on('click', function(e) {
         e.preventDefault();
 
@@ -124,9 +128,6 @@
             "password": $('input[name="password"]').val()
         };
 
-        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
         $.ajax({
             url: 'api/auth/login',
             type: 'POST',
@@ -134,21 +135,26 @@
             headers: token && header ? { [header]: token } : {},
             data: JSON.stringify(request),
             beforeSend: function() {
-                $('#submitBtn').prop('disabled', true).html(`
+                $('#form #login').prop('disabled', true).html(`
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Authentification...
+                    Login...
                 `);
             },
             success: function(response) {
                 alerts('Authentification effectuée avec succès !', 'alert-success', 'bi-check-circle');
                 setTimeout(function() {
-                    location.reload(true);
-                }, 4000);
+                    window.location.href = "/dashboard";
+                }, 1500);
             },
             error: function(xhr, status, error) {
-                alerts("Une erreur est survenue lors de l'authentification.");
-                console.error("Erreur lors de l'authentification :", xhr.responseText || error);
-                $('#submitBtn').prop('disabled', false).html(`
+                if (error.status === 400) {
+                    alerts("Echec d'authentication : login et ou mot de passe erroné.");
+                }else{
+                    alerts("Une erreur est survenue lors de l'authentification.");
+                }
+
+                // console.error("Erreur lors de l'authentification :", xhr.responseText || error);
+                $('#form #login').prop('disabled', false).html(`
                     Login
                 `);
             },

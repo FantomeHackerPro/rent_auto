@@ -1,11 +1,11 @@
-<section class="section" xmlns:th="http://www.thymeleaf.org">
+<section class="section" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${listTitle}">Liste</h5>
                     <p align="right">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add"><i class="bi bi-plus-circle-fill me-1"></i> Ajouter</button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" sec:authorize="hasRole('MANAGER')" data-bs-target="#add"><i class="bi bi-plus-circle-fill me-1"></i> Ajouter</button>
                     </p>
 
                     <!-- Table with stripped rows -->
@@ -40,6 +40,9 @@
         let itemData = /*[[${data}]]*/ [];
         console.log(itemData);
 
+        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
         $(document).ready(function() {
             $("#items").DataTable({
                 data: itemData,
@@ -49,8 +52,8 @@
                     {
                         data: null,
                         render: function(data, type, row) {
-                            let item1 = '<i class="bi bi-pencil-fill text-warning pr-5 pl-5 openUpdModal" data-bs-toggle="modal" data-bs-target="#upd" data-id="'+row.id+'" id="open-update-modal" style="cursor: pointer; margin: 0 5px"></i>';
-                            let item2 = '<i class="bi bi-trash-fill text-danger pl-5" style="cursor: pointer; margin: 0 5px"></i>';
+                            let item1 = '<i class="bi bi-pencil-fill text-warning pr-5 pl-5 openUpdModal" sec:authorize="hasAnyRole(\'MANAGER\', \'AGENT\')" data-bs-toggle="modal" data-bs-target="#upd" data-id="'+row.id+'" id="open-update-modal" style="cursor: pointer; margin: 0 5px"></i>';
+                            let item2 = '<i class="bi bi-trash-fill text-danger pl-5" sec:authorize="hasAnyRole(\'MANAGER\', \'AGENT\')" style="cursor: pointer; margin: 0 5px"></i>';
                             let items = item1+''+item2;
 
                             return items;

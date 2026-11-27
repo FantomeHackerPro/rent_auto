@@ -1,6 +1,6 @@
 package fr.ece.rentauto.controllers.dtos;
 
-import fr.ece.rentauto.domaines.enumerations.UserType;
+import fr.ece.rentauto.domaines.enumerations.UserRole;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,7 +22,7 @@ public class UserRequestDTO {
     private String password;
 
     @NotNull
-    private UserType userType;
+    private UserRole userRole;
 
     private Long staffId;
 
@@ -30,13 +30,13 @@ public class UserRequestDTO {
 
     @AssertTrue(message = "L'identifiant correspondant au type d'utilisateur (staffId ou customerId) est obligatoire")
     public boolean isValidUserTypeId() {
-        if (userType == null) {
+        if (userRole == null) {
             return true; // Laisse @NotNull gérer ce cas pour éviter un doublon d'erreur
         }
 
         // Adaptez les valeurs de l'enum selon votre classe UserType
-        return switch (userType) {
-            case STAFF -> staffId != null && customerId == null;
+        return switch (userRole) {
+            case AGENT -> staffId != null && customerId == null;
             case CUSTOMER -> customerId != null && staffId == null;
             default -> true; // Pour d'autres rôles éventuels (ex: ADMIN)
         };

@@ -3,96 +3,104 @@
         <h5 class="modal-title" th:text="${updateModalTitle}">Title</h5>
     </div>
     <div class="modal-body">
-        <form id="upd-form" class="needs-validation" novalidate>
+        <form id="upd-form" class="needs-validation" enctype="multipart/form-data" novalidate>
             <div class="container">
-                <div class="row g-1">
+                <div class="row g-2">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingRegistrationNumber" name="registerNumber" placeholder="Immatriculation" type="text" required>
-                            <label for="floatingRegistrationNumber">Immatriculation <i class="text-danger">*</i></label>
+                            <input class="form-control" id="updRegistrationNumber" name="registerNumber" placeholder="Immatriculation" type="text" required>
+                            <label for="updRegistrationNumber">Immatriculation <i class="text-danger">*</i></label>
                             <div class="invalid-feedback">Veuillez saisir le numéro d'immatriculation.</div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingBrand" name="brand" placeholder="Marque" type="text" required>
-                            <label for="floatingBrand">Marque <i class="text-danger">*</i></label>
+                            <input class="form-control" id="updBrand" name="brand" placeholder="Marque" type="text" required>
+                            <label for="updBrand">Marque <i class="text-danger">*</i></label>
                             <div class="invalid-feedback">Veuillez renseigner la marque.</div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingModel" name="model" placeholder="Modèle" type="text" required>
-                            <label for="floatingModel">Modèle <i class="text-danger">*</i></label>
+                            <input class="form-control" id="updModel" name="model" placeholder="Modèle" type="text" required>
+                            <label for="updModel">Modèle <i class="text-danger">*</i></label>
                             <div class="invalid-feedback">Veuillez renseigner le modèle.</div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select class="form-select" id="floatingCategory" data-placeholder="" aria-label="floatingCategory"  name="category" required>
+                            <select class="form-select" id="updCategory" name="category" required>
                                 <option></option>
                                 <option th:each="cat : ${vehicleCategories}"
                                         th:value="${cat}"
                                         th:text="${cat}">
                                 </option>
                             </select>
-                            <label for="floatingAgency">Catégorie <i class="text-danger">*</i></label>
+                            <label for="updCategory">Catégorie <i class="text-danger">*</i></label>
                             <div class="invalid-feedback">Veuillez sélectionner une catégorie.</div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select class="form-select" id="floatingAgency" data-placeholder="" aria-label="floatingAgency" name="agencyId" required>
+                            <select class="form-select" id="updAgency" name="agencyId" required>
                                 <option></option>
                                 <option th:each="ag : ${agencies}"
                                         th:value="${ag.id}"
                                         th:text="${ag.name}">
                                 </option>
                             </select>
-                            <label for="floatingAgency">Agence <i class="text-danger">*</i></label>
+                            <label for="updAgency">Agence <i class="text-danger">*</i></label>
                             <div class="invalid-feedback">Veuillez sélectionner une Agence.</div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select class="form-select" id="floatingEquipment" data-placeholder="" aria-label="floatingEquipment" name="equipmentIds" required multiple="multiple">
+                            <select class="form-select" id="updEquipment" name="equipmentIds" multiple="multiple">
                                 <option th:each="e : ${equipments}"
                                         th:value="${e.id}"
                                         th:text="${e.label}">
                                 </option>
                             </select>
-                            <label for="floatingEquipment">Equipement <i class="text-danger">*</i></label>
+                            <label for="updEquipment">Equipement</label>
                             <div class="invalid-feedback">Veuillez sélectionner un équipement.</div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingDailyRate" name="dailyRate" placeholder="Tarif Journalier" type="text" required>
-                            <label for="floatingDailyRate">Tarif Journalier <i class="text-danger">*</i></label>
+                            <input class="form-control" id="updDailyRate" name="dailyRate" placeholder="Tarif Journalier" type="text" required>
+                            <label for="updDailyRate">Tarif Journalier <i class="text-danger">*</i></label>
                             <div class="invalid-feedback">Veuillez renseigner le tarif journalier.</div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingYear" name="year" placeholder="Année" type="text" required>
-                            <label for="floatingYear">Année <i class="text-danger">*</i></label>
+                            <input class="form-control" id="updYear" name="year" placeholder="Année" type="text" required>
+                            <label for="updYear">Année <i class="text-danger">*</i></label>
                             <div class="invalid-feedback">Veuillez renseigner une année.</div>
                         </div>
                     </div>
 
+                    <div class="col-12">
+                        <label for="updImage" class="form-label">Photo du véhicule (laisser vide pour conserver l'actuelle)</label>
+                        <div class="mb-2">
+                            <img id="updImagePreview" th:src="@{/assets/img/logo.png}" alt="Aperçu véhicule"
+                                 class="img-thumbnail" style="max-height: 120px;">
+                        </div>
+                        <input class="form-control" id="updImage" name="image" type="file" accept="image/*">
+                    </div>
                 </div>
             </div>
         </form>
     </div>
     <div class="modal-footer bg-light">
-        <button class="btn btn-danger" data-bs-dismiss="modal" type="reset">Annuler</button>
+        <button class="btn btn-danger" data-bs-dismiss="modal" id="cancelBtn" type="reset">Annuler</button>
         <button class="btn btn-primary" type="button" id="submitBtn">Mettre à jour</button>
     </div>
 </div>
@@ -100,12 +108,13 @@
 <script>
     let vehicleId;
     const $udpForm = $("#upd-form");
+
     $(document).on('click', '.openUpdModal', function() {
         vehicleId = $(this).attr('data-id');
         const data = itemData.find(item => item.id === parseInt(vehicleId, 10));
 
         if (!data) {
-            alerts("Impossible de charger les données de ce véhicul.");
+            alerts("Impossible de charger les données de ce véhicule.");
             return;
         }
 
@@ -114,9 +123,20 @@
         $udpForm.find('input[name="model"]').val(data.model);
         $udpForm.find('input[name="dailyRate"]').val(data.dailyRate);
         $udpForm.find('input[name="year"]').val(data.year);
-        $udpForm.find('select[name="category"]').val(data.category).prop('selected', true);
-        $udpForm.find('select[name="agencyId"]').val(data.agency.id).prop('selected', true);
-        $udpForm.find('select[name="equipmentIds"]').val(data.equipmentIds).prop('selected', true);
+        $udpForm.find('select[name="category"]').val(data.category).trigger('change');
+        $udpForm.find('select[name="agencyId"]').val(data.agency.id).trigger('change');
+
+        const eqIds = data.equipments ? data.equipments.map(e => e.id) : (data.equipmentIds || []);
+        $udpForm.find('select[name="equipmentIds"]').val(eqIds).trigger('change');
+
+        $('#updImagePreview').attr('src', data.imageUrl ? data.imageUrl : '/assets/img/logo.png');
+        $udpForm.find('input[name="image"]').val('');
+    });
+
+    $('#updImage').on('change', function() {
+        if (this.files && this.files[0]) {
+            $('#updImagePreview').attr('src', URL.createObjectURL(this.files[0]));
+        }
     });
 
     $(document).on('click', '#upd #submitBtn', function(e) {
@@ -128,32 +148,22 @@
         $form.addClass('was-validated');
 
         if (!form.checkValidity()) {
-            alerts('Veuillez remplir tout les champs de saisie ayant des (<b class="text-danger">*</b>)');
+            alerts('Veuillez remplir tous les champs de saisie ayant des (<b class="text-danger">*</b>)');
             return;
         }
 
-        let request = {
-            "registerNumber": $form.find('input[name="registerNumber"]').val(),
-            "brand": $form.find('input[name="brand"]').val(),
-            "model": $form.find('input[name="model"]').val(),
-            "category": $form.find('select[name="category"]').val(),
-            "dailyRate": $form.find('input[name="dailyRate"]').val(),
-            "year": $form.find('input[name="year"]').val(),
-            "agencyId": $form.find('select[name="agencyId"]').val(),
-            "equipmentIds": $form.find('select[name="equipmentIds"]').val(),
-        };
-
-        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+        const formData = new FormData(form);
 
         $.ajax({
-            url: 'api/vehicles/update',
+            url: 'api/vehicles/' + vehicleId + '/update',
             type: 'POST',
-            contentType: 'application/json',
+            data: formData,
+            processData: false,
+            contentType: false,
             headers: token && header ? { [header]: token } : {},
-            data: JSON.stringify(request),
             beforeSend: function() {
-                $('#submitBtn').prop('disabled', true).html(`
+                $('#upd #cancelBtn').prop('disabled', true);
+                $('#upd #submitBtn').prop('disabled', true).html(`
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     Mise à jour...
                 `);
@@ -167,16 +177,16 @@
             error: function(xhr, status, error) {
                 alerts("Une erreur est survenue lors de l'enregistrement.");
                 console.error("Erreur lors de l'enregistrement :", xhr.responseText || error);
-                $('#submitBtn').prop('disabled', false).html(`
-                    Mettre à jour
-                `);
+                $('#upd #cancelBtn').prop('disabled', false);
+                $('#upd #submitBtn').prop('disabled', false).html('Mettre à jour');
             },
         });
     });
 
     $('.modal').on('hidden.bs.modal', function () {
-        const $form = $('#add-form');
-        $form.removeClass('was-validated');
-        $form[0].reset();
+        $(this).find('form').each(function() {
+            $(this).removeClass('was-validated');
+            this.reset();
+        });
     });
 </script>

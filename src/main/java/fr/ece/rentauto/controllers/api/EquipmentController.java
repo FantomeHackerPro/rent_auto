@@ -63,7 +63,7 @@ public class EquipmentController {
     @PutMapping("/{id}/update")
     public ResponseMessage<?> updateEquipment(@PathVariable Long id, @RequestBody EquipmentRequestDTO request) throws AppException {
         equipmentService.updateEquipment(id, request);
-        int code = HttpStatus.CREATED.value();
+        int code = HttpStatus.OK.value();
         ResponseMessage<?> response = new ResponseMessage<>();
         response.setMessage("Equipment has been updated successfully.");
         response.setStatus(code);

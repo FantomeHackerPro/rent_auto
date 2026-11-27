@@ -24,6 +24,14 @@ public class CustomErrorViewController implements ErrorController {
             if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
                 return "layouts/errors/500.html";
             }
+
+            if (statusCode == HttpStatus.UNAUTHORIZED.value()) {
+                return "layouts/errors/401.html";
+            }
+
+            if (statusCode == HttpStatus.FORBIDDEN.value()) {
+                return "layouts/errors/403.html";
+            }
         }
 
         return "error";

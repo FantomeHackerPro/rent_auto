@@ -3,6 +3,7 @@ package fr.ece.rentauto.services;
 import fr.ece.rentauto.configs.AppException;
 import fr.ece.rentauto.domaines.entities.AgencyEntity;
 import fr.ece.rentauto.controllers.dtos.AgencyRequestDTO;
+import fr.ece.rentauto.domaines.enumerations.VehicleStatus;
 import fr.ece.rentauto.domaines.mappers.AgencyMapper;
 import fr.ece.rentauto.repositories.AgencyRepository;
 import lombok.AllArgsConstructor;

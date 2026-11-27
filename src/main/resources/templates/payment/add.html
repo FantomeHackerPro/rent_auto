@@ -85,9 +85,6 @@
             agencyId: $addForm.find('select[name="agencyId"]').val().trim()
         };
 
-        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
         $.ajax({
             url: '/api/staffs/create',
             type: 'POST',
@@ -102,10 +99,10 @@
             `);
             },
             success: function(response) {
-                alerts("Le personnel a été créée avec succès !", 'alert-success', 'bi-check-circle', 2000);
+                alerts("Le personnel a été créée avec succès !", 'alert-success', 'bi-check-circle', 1500);
                 setTimeout(function() {
                     location.reload();
-                }, 2000);
+                }, 1500);
             },
             error: function(xhr, status, error) {
                 const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'enregistrement.";

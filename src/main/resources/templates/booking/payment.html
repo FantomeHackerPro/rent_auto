@@ -90,48 +90,45 @@
         const amountToPay = data.contract.price;
         $('input[name="amountToPay"]').val(amountToPay);
 
-        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
         $.ajax({
             url: '/api/payments/' + contractId + '/contract',
             type: 'GET',
             contentType: 'application/json',
             headers: token && header ? { [header]: token } : {},
             success: function(response) {
-                let paymentData = response.data;
+                console.log(response.data);
                 $("#paymentItems").DataTable({
-                    data: paymentData,
+                    data: response.data[0],
                     destroy: true,
                     columns: [
                         {
                             data: null,
                             render: function(data, type, row) {
                                 return `
-                        <span class="badge bg-warning">${row.amount}</span>
-                    `;
+                                    <span class="badge bg-warning">${row.amount}</span>
+                                `;
                             }
                         },
                         {
                             data: null,
                             render: function(data, type, row) {
                                 return `
-                        <span class="badge bg-primary">${row.paymentDate}</span>
-                    `;
+                                    <span class="badge bg-primary">${row.paymentDate}</span>
+                                `;
                             }
                         },
                         {
                             data: null,
                             render: function(data, type, row) {
                                     return `
-                            <span class="badge bg-secondary">${row.paymentMode}</span>
-                        `;
+                                <span class="badge bg-secondary">${row.paymentMode}</span>
+                            `;
                             }
                         },
                         {
                             data: null,
                             render: function(data, type, row) {
-                                let status = row.status ? row.status : "";
+                                let status = row.status;
                                 let bgColor;
                                 let label;
 
@@ -154,8 +151,8 @@
                                 }
 
                                 return `
-                        <span class="badge ${bgColor}">${label}</span>
-                    `;
+                                    <span class="badge ${bgColor}">${label}</span>
+                                `;
                             }
                         },
                     ]

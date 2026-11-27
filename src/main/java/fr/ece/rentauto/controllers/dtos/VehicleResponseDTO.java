@@ -38,4 +38,6 @@ public class VehicleResponseDTO {
 
     private List<BookingResponseDTO> bookings;
 
+    private String imageUrl;
+
 }
