@@ -10,13 +10,15 @@ import lombok.NoArgsConstructor;
 @Data
 public class UserResponseDTO {
 
+    private Long id;
+
     private String username;
 
     private String login;
 
     private String password;
 
-    private UserRole type;
+    private UserRole role;
 
     private StaffResponseDTO staff;
 

@@ -29,12 +29,10 @@ public class AuthenticationController {
     public ResponseMessage<?> login(@RequestBody LoginRequestDTO request, HttpServletRequest httpRequest) throws AppException {
         UserDetails userDetails = customUserDetailsService.login(request);
 
-        // 2. Crée l'objet d'authentification Spring Security
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities()
         );
 
-        // 3. Sauvegarde l'authentification dans le contexte et la session HTTP
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);

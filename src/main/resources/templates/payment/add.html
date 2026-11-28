@@ -99,10 +99,10 @@
             `);
             },
             success: function(response) {
-                alerts("Le personnel a été créée avec succès !", 'alert-success', 'bi-check-circle', 1500);
+                alerts("Le personnel a été créée avec succès !", 'alert-success', 'bi-check-circle', 1200);
                 setTimeout(function() {
                     location.reload();
-                }, 1500);
+                }, 1200);
             },
             error: function(xhr, status, error) {
                 const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'enregistrement.";

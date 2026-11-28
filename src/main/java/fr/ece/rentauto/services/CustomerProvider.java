@@ -34,18 +34,7 @@ public class CustomerProvider implements CustomerService{
     @Transactional
     @Override
     public CustomerEntity addCustomer(CustomerRequestDTO request) throws AppException {
-        CustomerEntity customer = customerRepository.save(CustomerMapper.mapToCustomerToAdd(request));
-
-        if (request.isHasAccount()) {
-            UserRequestDTO userRequest = new UserRequestDTO();
-            userRequest.setCustomerId(customer.getId());
-            userRequest.setLogin(customer.getEmail());
-            userRequest.setUsername(customer.getName());
-            userRequest.setUserRole(UserRole.CUSTOMER);
-
-            userService.addUser(userRequest);
-        }
-        return customer;
+        return customerRepository.save(CustomerMapper.mapToCustomerToAdd(request));
     }
 
     @Transactional

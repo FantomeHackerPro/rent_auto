@@ -1,0 +1,331 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title th:text="${pageTitle}">Title</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <!-- Favicons -->
+    <link href="assets/img/logo.png" rel="icon">
+    <link href="assets/img/logo.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+          rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+<main>
+    <div class="container">
+
+        <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+
+                        <div class="row justify-content-center py-2">
+                            <div class="d-flex justify-content-center align-items-center"><img
+                                    class="rounded img-fluid" src="/assets/img/logo.png" style="max-height: 60px;">
+                            </div>
+                            <h4 align="center" class="d-none d-lg-block fw-bold mt-3">Rent Auto</h4>
+                        </div><!-- End Logo -->
+
+                        <div class="card mb-3">
+
+                            <div class="card-body">
+
+                                <div class="pt-4 pb-2">
+                                    <h5 class="card-title text-center pb-0 fs-4 fw-bold">Création de compte</h5>
+                                </div>
+
+                                <form class="row g-3 needs-validation" id="form" novalidate>
+                                    <div class="col-12">
+                                        <label class="form-label" for="yourUsername">Nom d'utilisateur</label>
+                                        <div class="input-group has-validation">
+                                            <span class="input-group-text" id="inputGroupPrepend"><i
+                                                    class="bi bi-person-fill"></i></span>
+                                            <input class="form-control" id="yourUsername" name="username" required
+                                                   type="text">
+                                            <div class="invalid-feedback">Veuillez entrer votre nom d'utilisateur.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label" for="yourLogin">Identifiant</label>
+                                        <div class="input-group has-validation">
+                                            <span class="input-group-text" id="inputGroupLogin">@</span>
+                                            <input class="form-control" id="yourLogin" name="login" required
+                                                   type="text">
+                                            <div class="invalid-feedback">Veuillez entrer votre identifiant.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label" for="yourPassword">Mot de passe</label>
+                                        <div class="input-group has-validation">
+                                            <span class="input-group-text" id="inputGroupPassword"><i
+                                                    class="bi bi-lock-fill"></i></span>
+                                            <input class="form-control" id="yourPassword" name="password"
+                                                   required type="password">
+                                            <div class="invalid-feedback" id="passwordFeedback">
+                                                Le mot de passe doit contenir au moins 8 caractères, 1 majuscule, 1
+                                                minuscule, 1 chiffre et 1 caractère spécial.
+                                            </div>
+                                        </div>
+
+                                        <!-- Barre de robustesse -->
+                                        <div class="progress mt-2" style="height: 6px;">
+                                            <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="0"
+                                                 class="progress-bar" id="passwordStrengthBar" role="progressbar"
+                                                 style="width: 0%;"></div>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-1">
+                                            <small class="text-muted" id="passwordStrengthText">Robustesse : -</small>
+                                        </div>
+
+                                        <!-- Liste des critères -->
+                                        <ul class="list-unstyled small mt-2 mb-0" id="passwordRules">
+                                            <li class="text-muted" id="rule-length"><i class="bi bi-circle me-1"></i>Au
+                                                moins 8 caractères
+                                            </li>
+                                            <li class="text-muted" id="rule-lower"><i class="bi bi-circle me-1"></i>Au
+                                                moins une lettre minuscule (a-z)
+                                            </li>
+                                            <li class="text-muted" id="rule-upper"><i class="bi bi-circle me-1"></i>Au
+                                                moins une lettre majuscule (A-Z)
+                                            </li>
+                                            <li class="text-muted" id="rule-number"><i class="bi bi-circle me-1"></i>Au
+                                                moins un chiffre (0-9)
+                                            </li>
+                                            <li class="text-muted" id="rule-special"><i class="bi bi-circle me-1"></i>Au
+                                                moins un caractère spécial (!@#$%^&amp;*...)
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label" for="yourConfirmPassword">Confirmation du mot de passe</label>
+                                        <div class="input-group has-validation">
+                                            <span class="input-group-text" id="inputGroupConfirmPassword"><i
+                                                    class="bi bi-lock-fill"></i></span>
+                                            <input class="form-control" id="yourConfirmPassword" name="passwordConfirmation"
+                                                   required type="password">
+                                            <div class="invalid-feedback" id="confirmPasswordFeedback">
+                                                Veuillez saisir le même mot de passe.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 mt-4">
+                                        <button class="btn btn-primary w-100" id="submitBtn" type="button">Confirmer
+                                        </button>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <p class="small mb-0">Avez vous déjà un compte ? <a th:href="@{/login}">Se
+                                            conncter</a></p>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="copyright">
+                            &copy; Copyright <strong><span>Rent Auto</span></strong>. All Rights Reserved
+                        </div>
+                        <div class="credits">
+                            Powered by <a href="">Innovate Solution</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+</main><!-- End #main -->
+
+<a class="back-to-top d-flex align-items-center justify-content-center" href="#"><i
+        class="bi bi-arrow-up-short"></i></a>
+
+<!-- Vendor JS Files -->
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- Template Main JS File -->
+<script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
+<script src="assets/js/jquery.min.js"></script>
+<script>
+    const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+    const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+    const passwordInput = document.getElementById('yourPassword');
+    const confirmPasswordInput = document.getElementById('yourConfirmPassword');
+    const passwordFeedback = document.getElementById('passwordFeedback');
+    const confirmPasswordFeedback = document.getElementById('confirmPasswordFeedback');
+
+    function evaluatePasswordStrength(pwd) {
+        const checks = {
+            length: pwd.length >= 8,
+            lower: /[a-z]/.test(pwd),
+            upper: /[A-Z]/.test(pwd),
+            number: /[0-9]/.test(pwd),
+            special: /[^A-Za-z0-9]/.test(pwd)
+        };
+
+        const passedCount = Object.values(checks).filter(Boolean).length;
+        const isStrong = checks.length && checks.lower && checks.upper && checks.number && checks.special;
+
+        return {checks, passedCount, isStrong};
+    }
+
+    function updateRuleItem(elementId, passed) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        const icon = el.querySelector('i');
+
+        if (passed) {
+            el.classList.remove('text-muted', 'text-danger');
+            el.classList.add('text-success');
+            if (icon) icon.className = 'bi bi-check-circle-fill me-1';
+        } else {
+            el.classList.remove('text-success');
+            el.classList.add('text-muted');
+            if (icon) icon.className = 'bi bi-circle me-1';
+        }
+    }
+
+    function updateStrengthUI(pwd) {
+        const {checks, passedCount} = evaluatePasswordStrength(pwd);
+
+        updateRuleItem('rule-length', checks.length);
+        updateRuleItem('rule-lower', checks.lower);
+        updateRuleItem('rule-upper', checks.upper);
+        updateRuleItem('rule-number', checks.number);
+        updateRuleItem('rule-special', checks.special);
+
+        const $bar = $('#passwordStrengthBar');
+        const $label = $('#passwordStrengthText');
+
+        if (!pwd) {
+            $bar.css('width', '0%').removeClass('bg-danger bg-warning bg-info bg-success').attr('aria-valuenow', 0);
+            $label.text('Robustesse : -').removeClass('text-danger text-warning text-success').addClass('text-muted');
+            return;
+        }
+
+        const percent = passedCount * 20;
+        $bar.css('width', percent + '%').attr('aria-valuenow', percent);
+        $bar.removeClass('bg-danger bg-warning bg-info bg-success');
+        $label.removeClass('text-muted text-danger text-warning text-success');
+
+        if (passedCount <= 2) {
+            $bar.addClass('bg-danger');
+            $label.text('Robustesse : Faible').addClass('text-danger');
+        } else if (passedCount <= 4) {
+            $bar.addClass('bg-warning');
+            $label.text('Robustesse : Moyenne').addClass('text-warning');
+        } else {
+            $bar.addClass('bg-success');
+            $label.text('Robustesse : Forte').addClass('text-success');
+        }
+    }
+
+    function validatePasswordFields() {
+        const pwd = passwordInput.value;
+        const confirmPwd = confirmPasswordInput.value;
+        const {isStrong} = evaluatePasswordStrength(pwd);
+
+        updateStrengthUI(pwd);
+
+        if (!pwd) {
+            passwordInput.setCustomValidity('Veuillez entrer votre mot de passe !');
+            passwordFeedback.textContent = 'Veuillez entrer votre mot de passe !';
+        } else if (!isStrong) {
+            passwordInput.setCustomValidity('Mot de passe trop faible.');
+            passwordFeedback.textContent = 'Le mot de passe doit contenir au moins 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.';
+        } else {
+            passwordInput.setCustomValidity('');
+        }
+
+        if (!confirmPwd) {
+            confirmPasswordInput.setCustomValidity('Veuillez confirmer votre mot de passe !');
+            confirmPasswordFeedback.textContent = 'Veuillez entrer la confirmation du mot de passe !';
+        } else if (pwd !== confirmPwd) {
+            confirmPasswordInput.setCustomValidity('Les mots de passe ne correspondent pas.');
+            confirmPasswordFeedback.textContent = 'Les mots de passe ne correspondent pas.';
+        } else {
+            confirmPasswordInput.setCustomValidity('');
+        }
+
+        return passwordInput.checkValidity() && confirmPasswordInput.checkValidity();
+    }
+
+    $('#yourPassword, #yourConfirmPassword').on('input', function () {
+        validatePasswordFields();
+    });
+
+    $('#submitBtn').on('click', function (e) {
+        e.preventDefault();
+
+        const form = document.getElementById('form');
+        const $form = $('#form');
+
+        validatePasswordFields();
+        $form.addClass('was-validated');
+
+        if (!form.checkValidity()) {
+            alerts('Veuillez remplir tout les champs de saisie ayant des (<b class="text-danger">*</b>)');
+            return;
+        }
+
+        const request = {
+            username: $('input[name="username"]').val().trim(),
+            login: $('input[name="login"]').val().trim(),
+            password: passwordInput.value,
+            role: 'CUSTOMER'
+        };
+
+        $.ajax({
+            url: 'api/users/new-user',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: token && header ? {[header]: token} : {},
+            data: JSON.stringify(request),
+            beforeSend: function () {
+                $('#form #submitBtn').prop('disabled', true).html(`
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Création...
+                `);
+            },
+            success: function () {
+                alerts('Compte créé avec succès !', 'alert-success', 'bi-check-circle');
+                setTimeout(function () {
+                    window.location.href = '/login';
+                }, 1200);
+            },
+            error: function (xhr) {
+                const message = xhr.responseJSON?.message || 'Une erreur est survenue lors de la création de compte.';
+                alerts(message);
+                $('#form #submitBtn').prop('disabled', false).html('Confirmer');
+            }
+        });
+    });
+</script>

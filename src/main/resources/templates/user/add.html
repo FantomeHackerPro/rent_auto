@@ -6,31 +6,12 @@
         <form id="add-form" class="needs-validation" novalidate>
             <div class="container">
                 <div class="row g-1">
-
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" id="floatingName" name="username" placeholder="Nom d'utilisateur" type="text" required>
-                            <label for="floatingName">Nom d'utilisateur <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez saisir le nom de l'utilisateur.</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <input class="form-control" id="floatingLogin" name="login" placeholder="Identifiant" type="text" required>
-                            <label for="floatingLogin">Identifiant <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez saisir l'identifiant.</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <select class="form-select" id="floatingType" aria-label="floatingType" name="type" required>
+                            <select class="form-select" id="floatingType" aria-label="floatingType" name="role" required>
                                 <option value=""></option>
-                                <option th:each="ut : ${userTypes}"
-                                        th:value="${ut}"
-                                        th:text="${ut}">
-                                </option>
+                                <option value="CUSTOMER">Client</option>
+                                <option value="STAFF">Employé</option>
                             </select>
                             <label for="floatingType">Type d'utilisateur <i class="text-danger">*</i></label>
                             <div class="invalid-feedback">Veuillez sélectionner un type.</div>
@@ -76,22 +57,27 @@
 </div>
 
 <script>
-    $(document).on('change', '#upd #floatingType', function () {
-        const selectedType = ($(this).val() || '').trim().toUpperCase();
+    $(document).on('change', '#add-form #floatingType', function () {
+        const selectedType = $(this).val();
+        console.log('Type sélectionné :', selectedType);
 
-        const $customerContainer = $('#add #customerContainer');
-        const $staffContainer = $('#add #staffContainer');
-        const $customerSelect = $('#add #floatingCustomer');
-        const $staffSelect = $('#add #floatingStaff');
+        const $modal = $(this).closest('#add');
+        const $customerContainer = $modal.find('#customerContainer');
+        const $staffContainer = $modal.find('#staffContainer');
+        const $customerSelect = $modal.find('#floatingCustomer');
+        const $staffSelect = $modal.find('#floatingStaff');
 
-        // Toujours réinitialiser les deux selects et retirer l'obligation avant d'appliquer le nouveau choix
-        $customerSelect.val('').prop('required', false).trigger('change');
-        $staffSelect.val('').prop('required', false).trigger('change');
+        // Réinitialisation propre sans déclencher d'événements parasites
+        $customerSelect.val('').prop('required', false);
+        $staffSelect.val('').prop('required', false);
         $customerContainer.addClass('d-none');
         $staffContainer.addClass('d-none');
 
-        // Adapter 'STAFF' et 'CUSTOMER' selon les valeurs exactes de votre enum ${userTypes}
-        if (selectedType === 'AGENT' || selectedType === 'MANAGER') {
+        if (!selectedType) {
+            return;
+        }
+
+        if (selectedType === "STAFF") {
             $staffContainer.removeClass('d-none');
             $staffSelect.prop('required', true);
         } else {
@@ -121,11 +107,8 @@
         const customerVal = $addForm.find('select[name="customerId"]').val()?.trim();
 
         const request = {
-            username: $addForm.find('input[name="username"]').val()?.trim(),
-            login: $addForm.find('input[name="login"]').val()?.trim(),
-            userType: $addForm.find('select[name="type"]').val()?.trim(),
-            staffId: staffVal || null,       // Envoie null au lieu de "" si non sélectionné
-            customerId: customerVal || null  // Envoie null au lieu de "" si non sélectionné
+            staffId: staffVal || null,
+            customerId: customerVal || null
         };
 
         $.ajax({
@@ -142,10 +125,10 @@
             `);
             },
             success: function(response) {
-                alerts("L'utilisateur a été créé avec succès !", 'alert-success', 'bi-check-circle', 1500);
+                alerts("L'utilisateur a été créé avec succès !", 'alert-success', 'bi-check-circle', 1200);
                 setTimeout(function() {
                     location.reload();
-                }, 1500);
+                }, 1200);
             },
             error: function(xhr, status, error) {
                 const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'enregistrement.";

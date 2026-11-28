@@ -6,31 +6,12 @@
         <form id="upd-form" class="needs-validation" novalidate>
             <div class="container">
                 <div class="row g-1">
-
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <input class="form-control" id="floatingName" name="username" placeholder="Nom d'utilisateur" type="text" required>
-                            <label for="floatingName">Nom d'utilisateur <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez saisir le nom de l'utilisateur.</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <input class="form-control" id="floatingLogin" name="login" placeholder="Identifiant" type="text" required>
-                            <label for="floatingLogin">Identifiant <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez saisir l'identifiant.</div>
-                        </div>
-                    </div>
-
                     <div class="col-md-6">
                         <div class="form-floating">
                             <select class="form-select" id="floatingType" aria-label="floatingType" name="type" required>
                                 <option value=""></option>
-                                <option th:each="ut : ${userTypes}"
-                                        th:value="${ut}"
-                                        th:text="${ut}">
-                                </option>
+                                <option value="CUSTOMER">Client</option>
+                                <option value="STAFF">Employé</option>
                             </select>
                             <label for="floatingType">Type d'utilisateur <i class="text-danger">*</i></label>
                             <div class="invalid-feedback">Veuillez sélectionner un type.</div>
@@ -79,7 +60,7 @@
     const $udpForm = $('#upd-form');
     let staffId;
 
-    $(document).on('change', '#add #floatingType', function () {
+    $(document).on('change', '#upd-form #floatingType', function () {
         const selectedType = ($(this).val() || '').trim().toUpperCase();
 
         const $customerContainer = $('#add #customerContainer');
@@ -151,10 +132,10 @@
             `);
             },
             success: function(response) {
-                alerts("L'agence a été mise à jour avec succès !", 'alert-success', 'bi-check-circle', 1500);
+                alerts("L'agence a été mise à jour avec succès !", 'alert-success', 'bi-check-circle', 1200);
                 setTimeout(function() {
                     location.reload();
-                }, 1500);
+                }, 1200);
             },
             error: function(xhr, status, error) {
                 // Récupérer le message d'erreur du backend (Spring Boot / API) s'il existe

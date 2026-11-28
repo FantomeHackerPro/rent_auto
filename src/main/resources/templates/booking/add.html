@@ -1,80 +1,260 @@
+<style>
+    /* Stepper 3 étapes */
+    .stepper-wrapper {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    .stepper-wrapper::before {
+        content: "";
+        position: absolute;
+        top: 20px;
+        left: 16%;
+        right: 16%;
+        height: 2px;
+        background-color: #dee2e6;
+        z-index: 0;
+    }
+    .stepper-item {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        text-align: center;
+    }
+    .stepper-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #fff;
+        border: 2px solid #dee2e6;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        transition: all 0.25s ease;
+    }
+    .stepper-label {
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: #6c757d;
+    }
+    .stepper-item.active .stepper-circle {
+        border-color: #0d6efd;
+        background-color: #0d6efd;
+        color: #fff;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+    }
+    .stepper-item.active .stepper-label {
+        color: #0d6efd;
+        font-weight: 600;
+    }
+    .stepper-item.completed .stepper-circle {
+        border-color: #198754;
+        background-color: #198754;
+        color: #fff;
+    }
+    .stepper-item.completed .stepper-label {
+        color: #198754;
+    }
+    .form-step {
+        display: none;
+    }
+    .form-step.active {
+        display: block;
+    }
+</style>
 <div class="modal-content" th:fragment="addModal" xmlns:th="http://www.thymeleaf.org">
     <div class="modal-header text-black bg-light">
         <h5 class="modal-title" th:text="${addModalTitle}">Title</h5>
     </div>
     <div class="modal-body">
+
+        <div class="stepper-wrapper" id="bookingStepper">
+            <div class="stepper-item active" data-step="1">
+                <div class="stepper-circle">1</div>
+                <div class="stepper-label">Info réservation</div>
+            </div>
+            <div class="stepper-item" data-step="2">
+                <div class="stepper-circle">2</div>
+                <div class="stepper-label">Info paiement</div>
+            </div>
+        </div>
+
         <form id="add-form" class="needs-validation" novalidate>
             <div class="container">
-                <div class="row g-1">
+                <!-- ÉTAPE 1 : Formulaire de réservation -->
+                <div th:replace="~{booking/form1 :: form1}"></div>
 
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <input class="form-control" id="floatingName" name="startDate" placeholder="Date début" type="date" required>
-                            <label for="floatingName">Date début <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez saisir la date début.</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <input class="form-control" id="floatingCity" name="endDate" placeholder="Date fin" type="date" required>
-                            <label for="floatingCity">Date fin <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez renseigner la date de fin.</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <select class="form-select" id="floatingVehicle" data-placeholder="" aria-label="floatingVehicle" name="vehicleId" required>
-                                <option></option>
-                                <option th:each="v : ${vehicles}"
-                                        th:value="${v.id}"
-                                        th:text="${v.brand}">
-                                </option>
-                            </select>
-                            <label for="floatingVehicle">Véhicule <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez sélectionner un véhicule.</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <select class="form-select" id="floatingCustomer" data-placeholder="" aria-label="floatingCustomer" name="customerId" required>
-                                <option></option>
-                                <option th:each="c : ${customers}"
-                                        th:value="${c.id}"
-                                        th:text="${c.name}">
-                                </option>
-                            </select>
-                            <label for="floatingCustomer">Client <i class="text-danger">*</i></label>
-                            <div class="invalid-feedback">Veuillez sélectionner un client.</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 d-grid gap-2">
-                        <button class="btn btn-secondary" id="estimationBtn" type="button">Estimer</button>
-                    </div>
-
-                    <div class="col-md-8">
-                        <div class="form-floating">
-                            <input class="form-control" id="floatingPrice" name="price" value="0" placeholder="Prix" type="text" disabled readonly>
-                            <label for="floatingPrice">Prix <i class="text-danger">*</i></label>
-                        </div>
-                    </div>
-
-                </div>
+                <!-- ÉTAPE 2 : Formulaire du paiement -->
+                <div th:replace="~{booking/form3 :: form3}"></div>
             </div>
         </form>
     </div>
-    <div class="modal-footer bg-light">
-        <button class="btn btn-danger" data-bs-dismiss="modal" id="cancelBtn" type="reset">Annuler</button>
-        <button class="btn btn-primary" type="button" id="submitBtn">Enregistrer</button>
+
+    <div class="modal-footer bg-light d-flex justify-content-between">
+        <div>
+            <button class="btn btn-outline-secondary" data-bs-dismiss="modal" id="cancelBookingBtn" type="button">
+                Annuler
+            </button>
+            <button class="btn btn-secondary d-none" id="prevStepBtn" type="button">
+                <i class="bi bi-arrow-left me-1"></i> Précédent
+            </button>
+        </div>
+
+        <div>
+            <button class="btn btn-primary" id="nextStepBtn" type="button">
+                Suivant <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+            <button class="btn btn-success d-none" id="submitBtn" type="button">
+                <i class="bi bi-check-circle me-1"></i> Confirmer la réservation
+            </button>
+        </div>
     </div>
 </div>
 
 <script th:inline="javascript">
-    const $addForm = $("#add-form");
-    $(document).on('click', '#add #estimationBtn', function(e) {
+    const steps = [1, 3];
+    let stepIndex = 0;
+    let currentStep = steps[stepIndex];
+    let selectedVehicleId = null;
+    let isEstimated = false;
+
+    $(".vehicleField, .customerField").removeClass("d-none");
+    $(".vehicleField").find('select[name="vehicleId"]').prop('required', true);
+    $(".customerField").find('select[name="customerId"]').prop('required', true);
+
+    function showAlert(message) {
+        if (typeof alerts === 'function') {
+            alerts(message);
+        } else {
+            alert(message.replace(/<[^>]*>/g, ''));
+        }
+    }
+
+    function resetEstimation() {
+        isEstimated = false;
+        $('#add-form').find('input[name="price"]').val('');
+        $('#add-form').find('#paymentAmountDisplay').text('-- €');
+    }
+
+    function updateStepUI() {
+        currentStep = steps[stepIndex];
+
+        $('.form-step').removeClass('active');
+        $(`.form-step[data-step="${currentStep}"]`).addClass('active');
+
+        $('.stepper-item').each(function () {
+            const itemStep = parseInt($(this).data('step'), 10);
+            $(this).removeClass('active completed');
+
+            if (itemStep === currentStep) {
+                $(this).addClass('active');
+            } else if (steps.indexOf(itemStep) !== -1 && steps.indexOf(itemStep) < stepIndex) {
+                $(this).addClass('completed');
+            }
+        });
+
+        const form = document.getElementById('add-form');
+        if (form) {
+            $(form).removeClass('was-validated');
+        }
+
+        const isFirstStep = stepIndex === 0;
+        const isLastStep = stepIndex === steps.length - 1;
+
+        $('#prevStepBtn').toggleClass('d-none', isFirstStep);
+        $('#nextStepBtn').toggleClass('d-none', isLastStep);
+        $('#submitBtn').toggleClass('d-none', !isLastStep);
+    }
+
+    function validateCurrentStep() {
+        const form = document.getElementById('add-form');
+        if (!form) {
+            console.error('Form add-form not found in the DOM.');
+            return false;
+        }
+
+        const $addForm = $(form);
+        const $currentStepEl = $addForm.find(`.form-step[data-step="${currentStep}"]`);
+
+        if ($currentStepEl.length === 0) {
+            console.error(`Bloc .form-step[data-step="${currentStep}"] introuvable dans le DOM.`);
+            return false;
+        }
+
+        if (currentStep === 1) {
+            const startInput = $currentStepEl.find('input[name="startDate"]')[0];
+            const endInput = $currentStepEl.find('input[name="endDate"]')[0];
+
+            if (startInput && endInput) {
+                if (startInput.value && endInput.value && new Date(endInput.value) < new Date(startInput.value)) {
+                    endInput.setCustomValidity('Date de fin antérieure à la date de début');
+                } else {
+                    endInput.setCustomValidity('');
+                }
+            }
+        }
+
+        let isStepValid = true;
+        $currentStepEl.find('input, select, textarea').each(function () {
+            if (!this.disabled && $(this).is(':visible') && !this.checkValidity()) {
+                isStepValid = false;
+            }
+        });
+
+        $currentStepEl.addClass('was-validated');
+
+        if (!isStepValid) {
+            showAlert('Veuillez remplir tous les champs de saisie ayant des (<b class="text-danger">*</b>)');
+            return false;
+        }
+
+        // Contrôle obligatoire de l'estimation à l'étape 1
+        if (currentStep === 1) {
+            const priceVal = $addForm.find('input[name="price"]').val();
+            if (!isEstimated || priceVal === '' || priceVal === null || isNaN(Number(priceVal))) {
+                showAlert('Veuillez cliquer sur <b>Estimer</b> pour calculer le montant avant de passer à l’étape suivante.');
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    $('#nextStepBtn').on('click', function () {
+        if (!validateCurrentStep()) {
+            return;
+        }
+        if (stepIndex < steps.length - 1) {
+            stepIndex++;
+            updateStepUI();
+        }
+    });
+
+    $('#prevStepBtn').on('click', function () {
+        if (stepIndex > 0) {
+            stepIndex--;
+            updateStepUI();
+        }
+    });
+
+    // Invalide l'estimation si le véhicule ou les dates changent
+    $(document).on('change', '#add-form select[name="vehicleId"]', function () {
+        selectedVehicleId = $(this).val();
+        resetEstimation();
+    });
+
+    $(document).on('change', '#add-form input[name="startDate"], #add-form input[name="endDate"]', function () {
+        resetEstimation();
+    });
+
+    $(document).on('click', '#add-form #estimationBtn, #estimationBtn', function (e) {
         e.preventDefault();
 
         const form = document.getElementById('add-form');
@@ -84,126 +264,196 @@
         }
 
         const $addForm = $(form);
-        $addForm.addClass('was-validated');
+        const currentVehicleId = selectedVehicleId || $addForm.find('select[name="vehicleId"]').val();
+        const startDate = $addForm.find('input[name="startDate"]').val();
+        const endDate = $addForm.find('input[name="endDate"]').val();
 
-        let vehiclesData = /*[[${vehicles}]]*/ [];
-        let vehicle = vehiclesData.find(item => item.id === parseInt($addForm.find('select[name="vehicleId"]').val(), 10));
-        console.log(vehicle);
-        let amount = vehicle.dailyRate;
+        if (!currentVehicleId || !startDate || !endDate) {
+            $addForm.addClass('was-validated');
+            showAlert('Veuillez sélectionner un véhicule ainsi que les dates de début et de fin avant d’estimer.');
+            return;
+        }
+
+        if (new Date(endDate) < new Date(startDate)) {
+            showAlert('La date de fin ne peut pas être antérieure à la date de début.');
+            return;
+        }
+
+        const vehiclesData = /*[[${vehicles}]]*/ [];
+        const vehicle = vehiclesData.find(item => Number(item.id) === Number(currentVehicleId));
+
+        if (!vehicle) {
+            showAlert('Véhicule introuvable pour l’estimation.');
+            return;
+        }
+
+        const amount = vehicle.dailyRate;
+        $addForm.find('#paymentAmountDisplay').text(amount + ' €');
 
         const request = {
-            startDate: $addForm.find('input[name="startDate"]').val()?.trim(),
-            endDate: $addForm.find('input[name="endDate"]').val()?.trim(),
+            startDate: startDate,
+            endDate: endDate,
             amount: amount
         };
+
+        const csrfHeaders = (typeof token !== 'undefined' && typeof header !== 'undefined' && token && header)
+            ? { [header]: token }
+            : {};
 
         $.ajax({
             url: '/api/bookings/estimation',
             type: 'POST',
             contentType: 'application/json',
-            headers: token && header ? { [header]: token } : {},
+            headers: csrfHeaders,
             data: JSON.stringify(request),
-            beforeSend: function() {
-                $('#add #estimationBtn').prop('disabled', true).html(`
+            beforeSend: function () {
+                $addForm.find('#estimationBtn').prop('disabled', true).html(`
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                 Estimation...
             `);
             },
-            success: function(response) {
-                $('input[name="price"]').val(response.data[0]);
-                $('#add #estimationBtn').prop('disabled', false).text('Estimer');
-            },
-            error: function(xhr, status, error) {
-                const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'estimation.";
-                if (typeof alerts === 'function') {
-                    alerts(serverMessage);
+            success: function (response) {
+                const estimatedPrice = Array.isArray(response?.data) ? response.data[0] : response?.data;
+                if (estimatedPrice === undefined || estimatedPrice === null) {
+                    isEstimated = false;
+                    showAlert('Réponse d’estimation invalide.');
+                } else {
+                    isEstimated = true;
+                    $addForm.find('input[name="price"]').val(estimatedPrice);
+                    $addForm.find('#paymentAmountDisplay').text(estimatedPrice + ' €');
                 }
+                $addForm.find('#estimationBtn').prop('disabled', false).text('Estimer');
+            },
+            error: function (xhr, status, error) {
+                isEstimated = false;
+                const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'estimation.";
+                showAlert(serverMessage);
                 console.error("Erreur lors de l'estimation :", xhr.responseText || error);
-                $('#add #estimationBtn').prop('disabled', false).text('Estimer');
+                $addForm.find('#estimationBtn').prop('disabled', false).text('Estimer');
             }
         });
     });
 
-    $(document).on('click', '#add #submitBtn', function(e) {
+    let contractId = null;
+
+    function getCsrfHeaders() {
+        const activeToken = typeof csrfToken !== 'undefined' ? csrfToken : (typeof token !== 'undefined' ? token : null);
+        const activeHeader = typeof csrfHeader !== 'undefined' ? csrfHeader : (typeof header !== 'undefined' ? header : null);
+        return activeToken && activeHeader ? { [activeHeader]: activeToken } : {};
+    }
+
+    function setSubmitLoading(isLoading) {
+        $('#prevStepBtn, #cancelBookingBtn, #submitBtn').prop('disabled', isLoading);
+        if (isLoading) {
+            $('#submitBtn').html(`
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Traitement...
+            `);
+        } else {
+            $('#submitBtn').html('<i class="bi bi-check-circle me-1"></i> Confirmer la réservation');
+        }
+    }
+
+    $(document).on('click', '#add-form #submitBtn, #submitBtn', function (e) {
         e.preventDefault();
 
-        const form = document.getElementById('add-form');
-        if (!form) {
-            console.error('Form add-form not found in the DOM.');
+        if (!validateCurrentStep()) {
             return;
         }
 
-        // Récupérer le formulaire dynamiquement au moment du clic
-        const $addForm = $(form);
-        $addForm.addClass('was-validated');
+        addBooking();
+    });
 
-        if (!form.checkValidity()) {
-            if (typeof alerts === 'function') {
-                alerts('Veuillez remplir tous les champs de saisie ayant des (<b class="text-danger">*</b>)');
-            }
+    function getAddForm() {
+        const $form = $('#add-form');
+        if (!$form.length) {
+            console.error('Formulaire #add-form introuvable dans le DOM');
+            return null;
+        }
+        return $form;
+    }
+
+    function addPayment() {
+        const $form = getAddForm();
+        if (!$form) {
+            setSubmitLoading(false);
             return;
         }
 
-        const request = {
-            startDate: $addForm.find('input[name="startDate"]').val()?.trim(),
-            endDate: $addForm.find('input[name="endDate"]').val()?.trim(),
-            customerId: $addForm.find('select[name="customerId"]').val()?.trim(),
-            vehicleId: $addForm.find('select[name="vehicleId"]').val()?.trim(),
+        const amountVal = ($form.find('input[name="amount"]').val() || '').toString().trim();
+        const paymentDateVal = ($form.find('input[name="paymentDate"]').val() || '').toString().trim();
+        const paymentModeVal = ($form.find('select[name="paymentMode"]').val() || '').toString().trim();
+
+        const requestPayment = {
+            amount: amountVal || ($form.find('input[name="price"]').val() || '').toString().trim(),
+            paymentDate: paymentDateVal,
+            paymentMode: paymentModeVal,
+            contractId: contractId
         };
 
-        // const contract = {
-        //     price: $addForm.find('input[name="price"]').val()?.trim(),
-        // };
-        //
-        // const request = {
-        //     contractRequest: contract,
-        //     bookingRequest: booking,
-        // };
+        $.ajax({
+            url: '/api/payments/create',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(requestPayment),
+            headers: getCsrfHeaders(),
+            beforeSend: function () {
+                setSubmitLoading(true);
+            },
+            success: function (response) {
+                if (response && (response.status === 201 || response.status === 200)) {
+                    showAlert("La réservation a été créée avec succès !");
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1200);
+                } else {
+                    setSubmitLoading(false);
+                    showAlert(response?.message || "Le paiement n'a pas pu être enregistré.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Erreur paiement :", xhr.responseText || error);
+                setSubmitLoading(false);
+                showAlert(xhr.responseJSON?.message || "Erreur lors de l'enregistrement du paiement.");
+            }
+        });
+    }
 
-        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+    function addBooking() {
+        const $form = getAddForm();
+        if (!$form) return;
+
+        const requestBooking = {
+            startDate: $form.find('input[name="startDate"]').val(),
+            endDate: $form.find('input[name="endDate"]').val(),
+            customerId: $form.find('select[name="customerId"]').val(),
+            vehicleId: $form.find('select[name="vehicleId"]').val()
+        };
 
         $.ajax({
             url: '/api/bookings/create',
             type: 'POST',
             contentType: 'application/json',
-            headers: token && header ? { [header]: token } : {},
-            data: JSON.stringify(request),
-            beforeSend: function() {
-                $('#add #cancelBtn').prop('disabled', true);
-                $('#add #submitBtn').prop('disabled', true).html(`
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Enregistrement...
-            `);
+            data: JSON.stringify(requestBooking),
+            headers: getCsrfHeaders(),
+            beforeSend: function () {
+                setSubmitLoading(true);
             },
-            success: function(response) {
-                if (typeof alerts === 'function') {
-                    alerts("La réservation a été créée avec succès !", 'alert-success', 'bi-check-circle', 1500);
+            success: function (response) {
+                const createdBooking = Array.isArray(response?.data) ? response.data[0] : response?.data;
+                if (response && (response.status === 201 || response.status === 200) && createdBooking?.id) {
+                    contractId = createdBooking.id;
+                    addPayment();
+                } else {
+                    setSubmitLoading(false);
+                    showAlert(response?.message || "La réservation n'a pas pu être créée.");
                 }
-                setTimeout(function() {
-                    location.reload();
-                }, 1500);
             },
-            error: function(xhr, status, error) {
-                const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'enregistrement.";
-                if (typeof alerts === 'function') {
-                    alerts(serverMessage);
-                }
-                console.error("Erreur lors de l'enregistrement :", xhr.responseText || error);
-                $('#add #cancelBtn').prop('disabled', false);
-                $('#add #submitBtn').prop('disabled', false).text('Enregistrer');
+            error: function (xhr, status, error) {
+                console.error("Erreur réservation :", xhr.responseText || error);
+                setSubmitLoading(false);
+                showAlert(xhr.responseJSON?.message || "Erreur lors de la création de la réservation.");
             }
         });
-    });
-
-    // Réinitialisation ciblée uniquement sur la modale #add
-    $(document).on('hidden.bs.modal', '#add', function () {
-        const form = document.getElementById('add-form');
-        if (form) {
-            $(form).removeClass('was-validated');
-            form.reset();
-        }
-        $('#add #cancelBtn').prop('disabled', false);
-        $('#add #submitBtn').prop('disabled', false).text('Enregistrer');
-    });
+    }
 </script>

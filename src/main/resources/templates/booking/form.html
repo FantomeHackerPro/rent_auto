@@ -235,7 +235,6 @@
         let vehicle = vehiclesData.find(item => item.id === parseInt(vehicleId, 10));
         console.log(vehicle);
         let amount = vehicle.dailyRate;
-        $("#add-form").find("#paymentAmountDisplay").text(amount+" €");
 
         const request = {
             startDate: $addForm.find('input[name="startDate"]').val(),
@@ -257,8 +256,10 @@
             },
             success: function(response) {
                 console.log(response);
-                $('input[name="price"]').val(response.data[0]);
+                let price = $('input[name="price"]');
+                price.val(response.data[0]);
                 $('#add #estimationBtn').prop('disabled', false).text('Estimer');
+                $("#add-form").find("#paymentAmountDisplay").text(price.val()+" €");
             },
             error: function(xhr, status, error) {
                 const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de l'estimation.";

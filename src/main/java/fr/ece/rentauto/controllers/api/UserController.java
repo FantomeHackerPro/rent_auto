@@ -2,6 +2,7 @@ package fr.ece.rentauto.controllers.api;
 
 import fr.ece.rentauto.configs.AppException;
 import fr.ece.rentauto.configs.ResponseMessage;
+import fr.ece.rentauto.controllers.dtos.PasswordUpdateRequestDTO;
 import fr.ece.rentauto.controllers.dtos.UserRequestDTO;
 import fr.ece.rentauto.controllers.dtos.UserResponseDTO;
 import fr.ece.rentauto.domaines.mappers.UserMapper;
@@ -49,12 +50,49 @@ public class UserController {
         return response;
     }
 
+    @GetMapping("/{login}")
+    public ResponseMessage<UserResponseDTO> getUserByLogin(@PathVariable String login) throws AppException {
+        UserResponseDTO User = UserMapper.mapToUserResponse(userService.getUser(login));
+        int code = HttpStatus.NOT_FOUND.value();
+        if (User != null) {
+            code = HttpStatus.OK.value();
+        }
+        ResponseMessage<UserResponseDTO> response = new ResponseMessage<>();
+        response.setMessage("User");
+        response.setStatus(code);
+        response.setCode(code);
+        response.getData().add(User);
+        return response;
+    }
+
     @PostMapping("/create")
     public ResponseMessage<?> addUser(@RequestBody UserRequestDTO request) throws AppException {
         userService.addUser(request);
         int code = HttpStatus.CREATED.value();
-        ResponseMessage<UserResponseDTO> response = new ResponseMessage<>();
+        ResponseMessage<?> response = new ResponseMessage<>();
         response.setMessage("User has been created successfully");
+        response.setStatus(code);
+        response.setCode(code);
+        return response;
+    }
+
+    @PostMapping("/new-user")
+    public ResponseMessage<?> createUser(@RequestBody UserRequestDTO request) throws AppException {
+        userService.createUser(request);
+        int code = HttpStatus.CREATED.value();
+        ResponseMessage<?> response = new ResponseMessage<>();
+        response.setMessage("User has been created successfully");
+        response.setStatus(code);
+        response.setCode(code);
+        return response;
+    }
+
+    @PutMapping("/update-password")
+    public ResponseMessage<?> updatePassword(@RequestBody PasswordUpdateRequestDTO request) throws AppException {
+        userService.updatePassword(request);
+        int code = HttpStatus.OK.value();
+        ResponseMessage<?> response = new ResponseMessage<>();
+        response.setMessage("Password has been updated successfully");
         response.setStatus(code);
         response.setCode(code);
         return response;
@@ -64,7 +102,7 @@ public class UserController {
     public ResponseMessage<?> updateUser(@PathVariable Long id, @RequestBody UserRequestDTO request) throws AppException {
         userService.updateUser(id, request);
         int code = HttpStatus.OK.value();
-        ResponseMessage<UserResponseDTO> response = new ResponseMessage<>();
+        ResponseMessage<?> response = new ResponseMessage<>();
         response.setMessage("User has been updated successfully");
         response.setStatus(code);
         response.setCode(code);

@@ -68,7 +68,7 @@
                         data: null,
                         orderable: false,
                         render: function(data, type, row) {
-                            const imgSrc = row.imageUrl ? row.imageUrl : '/assets/img/car-placeholder.jpg';
+                            const imgSrc = row.imageUrl ? row.imageUrl : '/assets/img/logo.png';
                             const altText = `${row.brand || ''} ${row.model || ''}`.trim() || 'Véhicule';
                             return `
                                 <img src="${imgSrc}"

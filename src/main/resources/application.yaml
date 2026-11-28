@@ -19,7 +19,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: update  # Options courantes : create, create-drop, update, validate, none
+      ddl-auto: none  # Options courantes : create, create-drop, update, validate, none
     show-sql: true        # Affiche les requêtes SQL dans la console (utile en développement)
     properties:
       hibernate:

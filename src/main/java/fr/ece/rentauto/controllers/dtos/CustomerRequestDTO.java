@@ -20,6 +20,4 @@ public class CustomerRequestDTO {
     @NotBlank
     private String phone;
 
-    private boolean hasAccount;
-
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymleaft.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -11,8 +11,8 @@
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="assets/img/favicon.png" rel="icon">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link th:href="@{/assets/img/favicon.png}" rel="icon">
+    <link th:href="@{/assets/img/apple-touch-icon.png}" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -20,32 +20,21 @@
           rel="stylesheet">
 
     <!-- Vendor CSS Files -->
-    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-    <link href="assets/vendor/datatables/datatables.min.css" rel="stylesheet">
-    <script src="assets/js/jquery.min.js"></script>
+    <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/remixicon/remixicon.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/datatables/datatables.min.css}" rel="stylesheet">
+
+    <!-- Select2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 
     <!-- Template Main CSS File -->
-    <link href="assets/css/style.css" rel="stylesheet">
+    <link th:href="@{/assets/css/style.css}" rel="stylesheet">
 
-    <!-- Vendor JS Files -->
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/vendor/datatables/datatables.min.js"></script>
-
-    <!-- Template Main JS File -->
-    <script defer src="assets/js/main.js"></script>
-
-     Styles
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
-    <!-- Or for RTL support -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.rtl.min.css" />
-
-<!--    &lt;!&ndash; Scripts &ndash;&gt;-->
-<!--    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>-->
-<!--    <link href="assets/vendor/select2/css/select2.min.css" rel="stylesheet"/>-->
-<!--    <script src="assets/vendor/select2/js/select2.min.js"></script>-->
+    <!-- jQuery -->
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
 </head>
 
 <body>
@@ -63,7 +52,7 @@
     <div class="pagetitle mb-3">
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a th:href="@{/dashboard}">Tableau de bord</a></li>
+                <li class="breadcrumb-item" id="dashboard"><a th:href="@{/dashboard}">Tableau de bord</a></li>
                 <li class="breadcrumb-item active" id="sectionGroupTitle" th:text="${sectionGroupTitle}"></li>
                 <li class="breadcrumb-item active" id="sectionTitle" th:text="${sectionTitle}"></li>
             </ol>
@@ -80,31 +69,25 @@
 
 <a class="back-to-top d-flex align-items-center justify-content-center" href="#"><i
         class="bi bi-arrow-up-short"></i></a>
-</body>
+
+<!-- Vendor JS Files -->
+<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/assets/vendor/datatables/datatables.min.js}"></script>
+<!-- Décommentez si vos pages utilisent ces librairies : -->
+<!-- <script th:src="@{/assets/vendor/apexcharts/apexcharts.min.js}"></script> -->
+<!-- <script th:src="@{/assets/vendor/echarts/echarts.min.js}"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- Template Main JS File -->
+<script th:src="@{/assets/js/main.js}"></script>
 
 <script th:inline="javascript">
     let section = /*[[${sectionTitle}]]*/ "";
-    if (section == "") $("#sectionTitle").addClass("d-none");
+    if (section === "") $("#sectionTitle").addClass("d-none");
 
     let sectionGroup = /*[[${sectionGroupTitle}]]*/ "";
-    if (sectionGroup == "") $("#sectionGroupTitle").addClass("d-none");
-
-    // $( '.form-select' ).each( function() {
-    //     var $this = $( this );
-    //
-    //     $this.select2({
-    //         theme: "bootstrap-5",
-    //         width: $this.data( 'width' ) ? $this.data( 'width' ) : $this.hasClass( 'w-100' ) ? '100%' : 'style',
-    //         placeholder: $this.data( 'placeholder' ),
-    //         closeOnSelect: false,
-    //         allowClear: true
-    //     });
-    // });
-
-    // $(document).ready(function(){
-    //     $('.form-select').select2();
-    // });
-
+    if (sectionGroup === "") $("#sectionGroupTitle").addClass("d-none");
 </script>
-</html>
 
+</body>
+</html>

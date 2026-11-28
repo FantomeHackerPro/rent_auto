@@ -31,6 +31,9 @@ public class UserEntity {
     @Column(nullable = false)
     private UserRole role;
 
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean mustChangePassword;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private StaffEntity staff;
 
