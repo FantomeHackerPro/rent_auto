@@ -14,7 +14,7 @@ public class UserMapper {
         user.setUsername(request.getUsername());
         user.setLogin(request.getLogin());
         user.setPassword(request.getPassword());
-        user.setRole(request.getUserRole());
+        user.setRole(request.getRole());
         return user;
     }
 
@@ -33,9 +33,9 @@ public class UserMapper {
         response.setLogin(user.getLogin());
         response.setPassword(user.getPassword());
         response.setUsername(user.getUsername());
-        response.setType(user.getRole());
+        response.setRole(user.getRole());
         response.setStaff(StaffMapper.mapToStaffSummaryResponse(user.getStaff()));
-        response.setCustomer(CustomerMapper.mapToCustomerSummaryResponse(user.getCustomer()));
+        response.setCustomer(CustomerMapper.mapToCustomerResponse(user.getCustomer()));
         return response;
     }
 
@@ -44,10 +44,10 @@ public class UserMapper {
             return null;
         }
         UserResponseDTO response = new UserResponseDTO();
-        response.setLogin(user != null ? user.getLogin() : null);
-        response.setPassword(user != null ? user.getPassword() : null);
-        response.setUsername(user != null ? user.getUsername() : null);
-        response.setType(user != null ? user.getRole() : null);
+        response.setLogin(user.getLogin());
+        response.setPassword(user.getPassword());
+        response.setUsername(user.getUsername());
+        response.setRole(user.getRole());
         return response;
     }
 

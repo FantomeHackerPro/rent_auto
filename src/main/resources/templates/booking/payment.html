@@ -160,9 +160,9 @@
 
             },
             error: function(xhr, status, error) {
-                const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue lors de la mise à jour.";
+                const serverMessage = xhr.responseJSON?.message || "Une erreur est survenue.";
                 alerts(serverMessage);
-                console.error("Erreur lors de la mise à jour :", xhr.responseText || error);
+                console.error("Erreur :", xhr.responseText || error);
 
             }
         });

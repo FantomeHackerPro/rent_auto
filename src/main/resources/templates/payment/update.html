@@ -113,10 +113,10 @@
             `);
             },
             success: function(response) {
-                alerts("L'agence a été mise à jour avec succès !", 'alert-success', 'bi-check-circle', 1500);
+                alerts("L'agence a été mise à jour avec succès !", 'alert-success', 'bi-check-circle', 1200);
                 setTimeout(function() {
                     location.reload();
-                }, 1500);
+                }, 1200);
             },
             error: function(xhr, status, error) {
                 // Récupérer le message d'erreur du backend (Spring Boot / API) s'il existe

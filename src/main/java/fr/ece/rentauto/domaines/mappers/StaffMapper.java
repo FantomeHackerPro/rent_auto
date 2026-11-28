@@ -49,11 +49,11 @@ public class StaffMapper {
             return null;
         }
         StaffResponseDTO response = new StaffResponseDTO();
-        response.setId(staff != null ? staff.getId() : null);
-        response.setName(staff != null ? staff.getName() : null);
-        response.setEmail(staff != null ? staff.getEmail() : null);
-        response.setSurname(staff != null ? staff.getSurname() : null);
-        response.setRole(staff != null ? staff.getRole() : null);
+        response.setId(staff.getId());
+        response.setName(staff.getName());
+        response.setEmail(staff.getEmail());
+        response.setSurname(staff.getSurname());
+        response.setRole(staff.getRole());
         return  response;
     }
 

@@ -46,7 +46,7 @@ public class StaffProvider implements StaffService{
             userRequest.setStaffId(staffToAdd.getId());
             userRequest.setLogin(staffToAdd.getEmail());
             userRequest.setUsername(staffToAdd.getName());
-            userRequest.setUserRole(role);
+            userRequest.setRole(role);
 
             userService.addUser(userRequest);
         }

@@ -18,13 +18,41 @@
             </div>
         </div>
 
+        <div class="col-md-6 d-none vehicleField">
+            <div class="form-floating">
+                <select class="form-select" id="floatingVehicle" data-placeholder="" aria-label="floatingVehicle" name="vehicleId">
+                    <option></option>
+                    <option th:each="v : ${vehicles}"
+                            th:value="${v.id}"
+                            th:text="${v.brand}">
+                    </option>
+                </select>
+                <label for="floatingVehicle">Véhicule <i class="text-danger">*</i></label>
+                <div class="invalid-feedback">Veuillez sélectionner un véhicule.</div>
+            </div>
+        </div>
+
+        <div class="col-md-6 d-none customerField">
+            <div class="form-floating">
+                <select class="form-select" id="floatingCustomer" data-placeholder="" aria-label="floatingCustomer" name="customerId">
+                    <option></option>
+                    <option th:each="c : ${customers}"
+                            th:value="${c.id}"
+                            th:text="${c.name}">
+                    </option>
+                </select>
+                <label for="floatingCustomer">Client <i class="text-danger">*</i></label>
+                <div class="invalid-feedback">Veuillez sélectionner un client.</div>
+            </div>
+        </div>
+
         <div class="col-md-4 d-grid gap-2">
             <button class="btn btn-secondary" id="estimationBtn" type="button">Estimer</button>
         </div>
 
         <div class="col-md-8">
             <div class="form-floating">
-                <input class="form-control" id="floatingPrice" name="price" placeholder="Prix" type="text" readonly required>
+                <input class="form-control" id="floatingPrice" name="price" placeholder="Prix" type="text" disabled readonly required>
                 <label for="floatingPrice">Prix <i class="text-danger">*</i></label>
             </div>
         </div>

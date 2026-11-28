@@ -1,0 +1,163 @@
+<section class="section" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${listTitle}">Liste</h5>
+                    <p align="right">
+                        <button type="button" class="btn btn-primary" sec:authorize="hasAnyRole('MANAGER', 'AGENT')" data-bs-toggle="modal" data-bs-target="#add"><i class="bi bi-plus-circle-fill me-1"></i> Ajouter</button>
+                    </p>
+
+                    <!-- Table with stripped rows -->
+                    <div>
+                        <table class="table table-striped " id="items">
+                            <thead>
+                                <tr>
+                                    <th>Information sur le véhicule</th>
+                                    <th>Information sur le client</th>
+                                    <th>Date début</th>
+                                    <th>Date fin</th>
+                                    <th>Statut</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" data-bs-backdrop="static" id="add" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+                <div th:replace="~{${addModal}}"></div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="upd" data-bs-backdrop="static" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+                <div th:replace="~{${updateModal}}"></div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="payment" data-bs-backdrop="static" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+                <div th:replace="~{${paymentModal}}"></div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="equipment" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+                <div th:replace="~{${equipmentModal}}"></div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        let itemData = /*[[${data}]]*/ [];
+        console.log(itemData);
+
+        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+        $(document).ready(function() {
+            $("#items").DataTable({
+                data: itemData,
+                destroy: true,
+                columns: [
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            let vehicle = row.vehicle;
+                            let registrationNumber = vehicle.registerNumber ? vehicle.registerNumber : "";
+                            let brand = vehicle.brand ? vehicle.brand.toUpperCase() : "";
+                            let model = vehicle.model ? vehicle.model.toUpperCase() : "";
+
+                            return `
+                                <span class="small"><b>Immatriculation</b> : ${registrationNumber}</span><br>
+                                <span class="small"><b>Model</b> : ${model}</span><br>
+                                <span class="small"><b>Marque</b> : ${brand}</span><br>
+                                <span class="small"><b>Equipements</b> <i class='bi bi-tools text-primary openEquipmentModal' data-bs-toggle='modal' data-bs-target='#equipment' data-id='${row.id}' style='cursor: pointer; margin: 0 5px'></i></span><br>
+                            `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            let customer = row.customer;
+                            let name = customer.name ? customer.name.toUpperCase() : "";
+                            let email = customer.email ? customer.email.toLowerCase() : "";
+                            let phone = customer.phone ? customer.phone : "";
+
+                            return `
+                                <span class="small"><b>Nom</b> : ${name}</span><br>
+                                <span class="small"><b>Email</b> : ${email}</span><br>
+                                <span class="small"><b>Phone</b> : ${phone}</span><br>
+                            `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `
+                                <span class="badge bg-primary">${row.startDate}</span>
+                            `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `
+                                <span class="badge bg-primary">${row.endDate}</span>
+                            `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            let status = row.status ? row.status : "";
+                            let bgColor;
+                            let label;
+
+                            switch (status) {
+                                case "PENDING":
+                                    bgColor = "bg-warning";
+                                    label = "En cours";
+                                    break;
+                                case "CONFIRMED":
+                                    bgColor = "bg-primary";
+                                    label = "Confirmé";
+                                    break;
+                                case "CANCELLED":
+                                    bgColor = "bg-danger text-dark";
+                                    label = "Annulé";
+                                    break;
+                                case "FINISHED":
+                                    bgColor = "bg-success text-dark";
+                                    label = "Terminé";
+                                    break;
+                                default:
+                                    bgColor = "bg-secondary";
+                                    label = status || "Unknown";
+                            }
+
+                            return `
+                                <span class="badge ${bgColor}">${label}</span>
+                            `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            let item1 = row.status === "PENDING" ? '<i class="bi bi-pencil-fill text-warning pr-5 pl-5 openUpdModal" title="modifier" data-bs-toggle="modal" sec:authorize="hasRole(\'CUSTOMER\')" data-bs-target="#upd" data-id="'+row.id+'" id="open-update-modal" style="cursor: pointer; margin: 0 5px"></i>' : '';
+                            let item2 = '<i class="bi bi-credit-card text-primary pr-5 pl-5 openPayementModal" title="paiements" data-bs-toggle="modal" sec:authorize="hasAnyRole(\'AGENT\', \'MANAGER\', \'CUSTOMER\')" data-bs-target="#payment" data-id="'+row.id+'" style="cursor: pointer; margin: 0 5px"></i>';
+                            let item3 = '<i class="bi bi-card-heading text-primary pr-5 pl-5" title="contrat" data-bs-toggle="modal" sec:authorize="hasAnyRole(\'AGENT\', \'MANAGER\', \'CUSTOMER\')" data-id="'+row.id+'" style="cursor: pointer; margin: 0 5px"></i>';
+                            let item4 = row.status === "PENDING" ? '<i class="bi bi-trash-fill text-danger pr-5 pl-5 openCancelModal" sec:authorize="hasRole(\'CUSTOMER\')" title="supprimer" data-bs-toggle="modal" data-bs-target="#cancel" data-id="'+row.id+'" style="cursor: pointer; margin: 0 5px"></i>' : '';
+
+                            return item1 + ' ' + item2 + ' ' + item3 + ' ' + item4;
+                        }
+                    },
+                ]
+            });
+        });
+    </script>
+</section>

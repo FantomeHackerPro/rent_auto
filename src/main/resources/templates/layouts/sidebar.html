@@ -1,18 +1,28 @@
 <aside xmlns:th="http://www.thymleaft.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" id="sidebar" class="sidebar" th:fragment="aside">
     <ul class="sidebar-nav" id="sidebar-nav">
         <!-- Affiché uniquement si l'utilisateur connecté a le rôle CUSTOMER -->
-        <li class="nav-item" th:if="${#authorization.expression('hasRole(''CUSTOMER'')')}">
-            <a class="nav-link collapsed" th:href="@{/home}">
-                <i class="bi bi-house-door"></i>
-                <span>Accueil</span>
+        <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+            <a class="nav-link collapsed" th:href="@{/admin/dashboard}">
+                <i class="bi bi-grid"></i><span>Tableau de bord</span>
             </a>
-        </li><!-- End Home Nav -->
+        </li>
 
-        <!-- Affiché uniquement si l'utilisateur est connecté avec un autre rôle que CUSTOMER -->
-        <li class="nav-item" th:if="${#authorization.expression('isAuthenticated() and !hasRole(''CUSTOMER'')')}">
-            <a class="nav-link collapsed" th:href="@{/dashboard}">
+        <li class="nav-item" sec:authorize="hasRole('MANAGER')">
+            <a class="nav-link collapsed" th:href="@{/manager/dashboard}">
+                <i class="bi bi-grid"></i><span>Tableau de bord</span>
+            </a>
+        </li>
+
+        <li class="nav-item" sec:authorize="hasRole('AGENT')">
+            <a class="nav-link collapsed" th:href="@{/staff/dashboard}">
+                <i class="bi bi-grid"></i><span>Tableau de bord</span>
+            </a>
+        </li>
+
+        <li class="nav-item" sec:authorize="hasRole('CUSTOMER')">
+            <a class="nav-link collapsed" th:href="@{/home}">
                 <i class="bi bi-grid"></i>
-                <span>Tableau de bord</span>
+                <span>Acceuil</span>
             </a>
         </li><!-- End Dashboard Nav -->
 
@@ -30,7 +40,7 @@
             </a>
         </li><!-- End Customer Nav -->
 
-        <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+        <li class="nav-item" sec:authorize="hasAnyRole('AGENT', 'MANAGER')">
             <a class="nav-link collapsed" th:href="@{/equipment}">
                 <i class="bi bi-tools"></i><span>Equipements</span>
             </a>
@@ -42,9 +52,15 @@
             </a>
         </li><!-- End AGENT Nav -->
 
-        <li class="nav-item" sec:authorize="hasAnyRole('CUSTOMER','AGENT','MANAGER')">
+        <li class="nav-item" sec:authorize="hasAnyRole('AGENT','MANAGER')">
             <a class="nav-link collapsed" th:href="@{/booking}">
                 <i class="bi bi-card-checklist"></i><span>Réservations</span>
+            </a>
+        </li><!-- End Booking Nav -->
+
+        <li class="nav-item" sec:authorize="hasAnyRole('CUSTOMER')">
+            <a class="nav-link collapsed" th:href="@{/customer/booking}">
+                <i class="bi bi-card-checklist"></i><span>Mes Réservations</span>
             </a>
         </li><!-- End Booking Nav -->
 

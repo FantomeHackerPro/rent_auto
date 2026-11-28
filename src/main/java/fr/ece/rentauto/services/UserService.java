@@ -1,6 +1,7 @@
 package fr.ece.rentauto.services;
 
 import fr.ece.rentauto.configs.AppException;
+import fr.ece.rentauto.controllers.dtos.PasswordUpdateRequestDTO;
 import fr.ece.rentauto.domaines.entities.UserEntity;
 import fr.ece.rentauto.controllers.dtos.UserRequestDTO;
 
@@ -10,6 +11,9 @@ public interface UserService {
     void initializeManager();
     List<UserEntity> getUsers();
     UserEntity getUser(Long id) throws AppException;
+    UserEntity getUser(String login) throws AppException;
     void addUser(UserRequestDTO request) throws AppException;
+    void createUser(UserRequestDTO request) throws AppException;
+    void updatePassword(PasswordUpdateRequestDTO request) throws AppException;
     void updateUser(Long id, UserRequestDTO request) throws AppException;
 }

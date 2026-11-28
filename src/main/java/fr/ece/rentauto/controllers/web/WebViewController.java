@@ -1,12 +1,21 @@
 package fr.ece.rentauto.controllers.web;
 
+import fr.ece.rentauto.controllers.dtos.BookingResponseDTO;
+import fr.ece.rentauto.controllers.dtos.CustomerResponseDTO;
+import fr.ece.rentauto.domaines.entities.CustomUserDetails;
 import fr.ece.rentauto.domaines.enumerations.*;
 import fr.ece.rentauto.domaines.mappers.*;
 import fr.ece.rentauto.services.*;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @Controller
@@ -22,13 +31,25 @@ public class WebViewController {
     private PaymentService paymentService;
 
     @GetMapping("/login")
-    public String Login (Model model) {
-        model.addAttribute("pageTitle", "Login - Rent Auto");
-        return "/login";
+    public String login (Model model) {
+        model.addAttribute("pageTitle", "Authentification - Rent Auto");
+        return "authentication/login";
+    }
+
+    @GetMapping("/register")
+    public String register (Model model) {
+        model.addAttribute("pageTitle", "Création de compte - Rent Auto");
+        return "authentication/register";
+    }
+
+    @GetMapping("/update-password")
+    public String updatePassword (Model model) {
+        model.addAttribute("pageTitle", "Création de compte - Rent Auto");
+        return "authentication/update-password";
     }
 
     @GetMapping("agency")
-    public String Agency (Model model) {
+    public String agency (Model model) {
         model.addAttribute("pageTitle", "Gestion des agences - Rent Auto");
         model.addAttribute("sectionTitle", "Agences");
         model.addAttribute("data", AgencyMapper.mapToAgencyResponseList(this.agencyService.getAgencies()));
@@ -48,7 +69,7 @@ public class WebViewController {
     }
 
     @GetMapping("/booking")
-    public String Booking (Model model) {
+    public String booking (Model model) {
         model.addAttribute("pageTitle", "Gestion des réservations - Rent Car");
         model.addAttribute("sectionTitle", "Réservations");
         model.addAttribute("data", BookingMapper.mapToBookingResponseList(bookingService.getBookings()));
@@ -71,8 +92,34 @@ public class WebViewController {
         return "layouts/main";
     }
 
+    @GetMapping("/customer/booking")
+    public String bookingCustomer (@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+        CustomerResponseDTO customer = (userDetails != null) ? userDetails.getCustomer() : null;
+        List<BookingResponseDTO> bookings = customer != null ? customer.getBookings() : new ArrayList<>();
+        model.addAttribute("pageTitle", "Gestion des réservations - Rent Car");
+        model.addAttribute("sectionTitle", "Réservations");
+        model.addAttribute("data", bookings);
+        model.addAttribute("sectionGroupTitle", "");
+        model.addAttribute("content", "booking/index");
+        model.addAttribute("listTitle", "Liste des réservations");
+        model.addAttribute("addModal", "booking/add");
+        model.addAttribute("addModalTitle", "Enregistrement d'une réservation");
+        model.addAttribute("updateModal", "booking/update");
+        model.addAttribute("updateModalTitle", "Edition d'une réservation");
+        model.addAttribute("paymentListTitle", "Liste des paiement");
+        model.addAttribute("paymentModal", "booking/payment");
+        model.addAttribute("paymentModalTitle", "Paiements");
+        model.addAttribute("equipmentModal", "booking/equipment");
+        model.addAttribute("equipmentListTitle", "Liste des équipements");
+        if (userDetails != null && userDetails.getCustomer() != null) {
+            model.addAttribute("customer", userDetails.getCustomer());
+        }
+
+        return "layouts/main";
+    }
+
     @GetMapping("/customer")
-    public String Customer (Model model) {
+    public String customer (Model model) {
         model.addAttribute("pageTitle", "Gestion des clients - Rent Car");
         model.addAttribute("sectionTitle", "Clients");
         model.addAttribute("data", CustomerMapper.mapToCustomerResponseList(customerService.getCustomers()));
@@ -89,31 +136,70 @@ public class WebViewController {
         return "layouts/main";
     }
 
-    @GetMapping("/dashboard")
-    public String Dashboard (Model model) {
+    @GetMapping("/")
+    public String dashboard(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+        if (hasRole(authentication, UserRole.ADMIN)) {
+            return "redirect:/admin/dashboard";
+        }
+        if (hasRole(authentication, UserRole.MANAGER)) {
+            return "redirect:/manager/dashboard";
+        }
+        if (hasRole(authentication, UserRole.AGENT)) {
+            return "redirect:/staff/dashboard";
+        }
+
+        return "redirect:/home";
+    }
+
+    @GetMapping("/admin/dashboard")
+    public String dashboardAdmin (Model model) {
         model.addAttribute("pageTitle", "Tableau de bord - Rent Auto");
         model.addAttribute("sectionTitle", "");
         model.addAttribute("sectionGroupTitle", "");
-        model.addAttribute("content", "dashboard/index");
+        model.addAttribute("content", "dashboard/admin/index");
 
         return "layouts/main";
     }
 
-    @GetMapping({"/", "/home"})
-    public String Home (Model model) {
+    @GetMapping("/manager/dashboard")
+    public String dashboardManager (Model model) {
+        model.addAttribute("pageTitle", "Tableau de bord - Rent Auto");
+        model.addAttribute("sectionTitle", "");
+        model.addAttribute("sectionGroupTitle", "");
+        model.addAttribute("content", "dashboard/manager/index");
+
+        return "layouts/main";
+    }
+
+    @GetMapping("/staff/dashboard")
+    public String dashboardStaff (Model model) {
+        model.addAttribute("pageTitle", "Tableau de bord - Rent Auto");
+        model.addAttribute("sectionTitle", "");
+        model.addAttribute("sectionGroupTitle", "");
+        model.addAttribute("content", "dashboard/staff/index");
+
+        return "layouts/main";
+    }
+
+    @GetMapping("/home")
+    public String home (Model model) {
         model.addAttribute("pageTitle", "Acceuil - Rent Auto");
         model.addAttribute("sectionTitle", "Réservation des véhicules");
         model.addAttribute("vehicles", VehicleMapper.mapToVehicleResponseList(this.vehicleService.getVehicles(VehicleStatus.AVAILABLE)));
         model.addAttribute("sectionGroupTitle", "");
+        model.addAttribute("content", "home/index");
         model.addAttribute("addModal", "booking/form");
         model.addAttribute("addModalTitle", "Enregistrement d'une réservation");
         model.addAttribute("paymentModes", PaymentMode.values());
 
-        return "layouts/home";
+        return "layouts/main";
     }
 
     @GetMapping("/equipment")
-    public String Equipment (Model model) {
+    public String equipment (Model model) {
         model.addAttribute("pageTitle", "Gestion des équipements - Rent Auto");
         model.addAttribute("sectionTitle", "Equipements");
         model.addAttribute("data", EquipmentMapper.mapToEquipmentToResponseList(this.equipmentService.getEquipments()));
@@ -130,7 +216,7 @@ public class WebViewController {
     }
 
     @GetMapping("/payment")
-    public String Payment (Model model) {
+    public String payment (Model model) {
         model.addAttribute("pageTitle", "Gestion des paiements - Rent Auto");
         model.addAttribute("sectionTitle", "Paiements");
         model.addAttribute("data", PaymentMapper.mapToPaymentResponseList(this.paymentService.getPayments()));
@@ -147,7 +233,7 @@ public class WebViewController {
     }
 
     @GetMapping("/staff")
-    public String Staff (Model model) {
+    public String staff (Model model) {
         model.addAttribute("pageTitle", "Gestion du personnel - Rent Auto");
         model.addAttribute("sectionTitle", "Personnel");
         model.addAttribute("data", StaffMapper.mapToStaffResponseList(this.staffService.getAllStaff()));
@@ -165,7 +251,7 @@ public class WebViewController {
     }
 
     @GetMapping("/user")
-    public String User (Model model) {
+    public String user (Model model) {
         model.addAttribute("pageTitle", "Gestion des utilisateurs - Rent Auto");
         model.addAttribute("sectionTitle", "Utilisateurs");
         model.addAttribute("data", UserMapper.mapToUserResponseList(this.userService.getUsers()));
@@ -184,7 +270,7 @@ public class WebViewController {
     }
 
     @GetMapping("/vehicle")
-    public String Vehicle (Model model) {
+    public String vehicle (Model model) {
         model.addAttribute("pageTitle", "Gestion des véhicules - Rent Auto");
         model.addAttribute("sectionTitle", "Véhicules");
         model.addAttribute("data", VehicleMapper.mapToVehicleResponseList(this.vehicleService.getVehicles()));
@@ -207,5 +293,37 @@ public class WebViewController {
         model.addAttribute("equipmentListTitle", "Liste des équipements");
 
         return "layouts/main";
+    }
+
+    @GetMapping("/redirect")
+    public String redirectByRole(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
+        boolean isAdmin = hasRole(authentication, UserRole.ADMIN);
+        if (isAdmin) {
+            return "redirect:/admin/dashboard";
+        }
+
+        boolean isManager = hasRole(authentication, UserRole.MANAGER);
+        if (isManager) {
+            return "redirect:/manager/dashboard";
+        }
+
+        boolean isAgent = hasRole(authentication, UserRole.AGENT);
+        if (isAgent) {
+            return "redirect:/staff/dashboard";
+        }
+
+        return "redirect:/home";
+    }
+
+    private boolean hasRole(Authentication authentication, UserRole role) {
+        String exact = role.name();
+        String prefixed = "ROLE_" + role.name();
+        return authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(authority -> exact.equals(authority) || prefixed.equals(authority));
     }
 }
