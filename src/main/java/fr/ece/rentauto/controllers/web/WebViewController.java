@@ -187,7 +187,7 @@ public class WebViewController {
     @GetMapping("/home")
     public String home (Model model) {
         model.addAttribute("pageTitle", "Acceuil - Rent Auto");
-        model.addAttribute("sectionTitle", "Réservation des véhicules");
+        model.addAttribute("sectionTitle", "");
         model.addAttribute("vehicles", VehicleMapper.mapToVehicleResponseList(this.vehicleService.getVehicles(VehicleStatus.AVAILABLE)));
         model.addAttribute("sectionGroupTitle", "");
         model.addAttribute("content", "home/index");
