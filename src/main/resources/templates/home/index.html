@@ -8,36 +8,36 @@
     <div class="row g-3" th:if="${vehicles != null and !#lists.isEmpty(vehicles)}">
         <div th:each="vehicle : ${vehicles}"
              th:if="${vehicle != null}"
-             th:class="${#lists.size(vehicles) == 1} ? 'col-12' : 'col-12 col-md-6 col-lg-4'">
-            <div class="card col-md-2">
-                <div class="position-relative">
+             th:class="${#lists.size(vehicles) == 1} ? 'col-12' : 'col-12 col-sm-6 col-lg-3'">
+            <div class="card h-100 w-100 shadow-sm border rounded-3 overflow-hidden d-flex flex-column">
+                <div class="position-relative bg-light">
                     <img th:src="${(vehicle?.imageUrl != null and !#strings.isEmpty(vehicle?.imageUrl)) ? vehicle.imageUrl : '/assets/img/logo.png'}"
-                         class="card-img-top"
-                         height="200"
+                         class="card-img-top w-100 object-fit-cover"
+                         style="height: 145px;"
                          th:alt="${(vehicle?.brand ?: '') + ' ' + (vehicle?.model ?: '')}"
                          onerror="this.onerror=null;this.src='/assets/img/logo.png';">
                     <span class="badge rounded-pill bg-primary position-absolute top-0 end-0 m-2 px-2 py-1 small"
                           th:text="${vehicle?.category}">
-                        SUV
-                    </span>
+                    SUV
+                </span>
                 </div>
 
-                <div class="card-body">
-                    <h6 class="card-title mb-1 p-0 fw-bold fs-6 text-truncate"
+                <div class="card-body d-flex flex-column p-3">
+                    <h6 class="card-title mb-0 fw-bold text-truncate"
                         th:text="${(vehicle?.brand ?: '') + ' ' + (vehicle?.model ?: '')}">
                         Brand Model
                     </h6>
-                    <small class="text-muted mb-2" th:text="'Année : ' + ${vehicle?.year}">Année : 2024</small>
+                    <small class="text-muted d-block mb-2" th:text="'Année : ' + ${vehicle?.year}">Année : 2024</small>
 
                     <!-- Équipements associés -->
-                    <div class="mb-3">
+                    <div class="mb-2">
                         <small class="text-muted d-block mb-1 fw-semibold">Équipements :</small>
                         <div class="d-flex flex-wrap gap-1" th:if="${vehicle?.equipments != null and !#lists.isEmpty(vehicle?.equipments)}">
-                            <span class="badge rounded-pill bg-light text-dark border px-2 py-1"
-                                  th:each="eq : ${vehicle.equipments}"
-                                  th:text="${eq?.label}">
-                                GPS
-                            </span>
+                        <span class="badge rounded-pill bg-light text-dark border px-2 py-1"
+                              th:each="eq : ${vehicle.equipments}"
+                              th:text="${eq?.label}">
+                            GPS
+                        </span>
                         </div>
                         <small class="text-muted fst-italic" th:if="${vehicle?.equipments == null or #lists.isEmpty(vehicle?.equipments)}">
                             Équipement standard
@@ -45,14 +45,14 @@
                     </div>
 
                     <!-- Tarif journalier et action alignés en bas -->
-                    <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
-                        <div>
-                            <span class="fs-6 fw-bold text-primary"
-                                  th:text="${(vehicle?.dailyRate ?: 0) + ' €'}">55 €</span>
+                    <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center gap-2">
+                        <div class="text-nowrap">
+                        <span class="fs-6 fw-bold text-primary"
+                              th:text="${(vehicle?.dailyRate ?: 0) + ' €'}">55 €</span>
                             <small class="text-muted">/ j</small>
                         </div>
 
-                        <button class="btn btn-sm btn-primary rounded-pill px-3"
+                        <button class="btn btn-sm btn-primary rounded-pill px-3 text-nowrap flex-shrink-0"
                                 data-bs-toggle="modal" data-bs-target="#add"
                                 type="button"
                                 th:attr="data-id=${vehicle?.id}">
@@ -63,6 +63,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" data-bs-backdrop="static" id="add" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
             <div th:replace="~{${addModal}}"></div>
@@ -74,6 +75,7 @@
     const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
     const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
     let customerId;
+    let contractId;
 
     let section = /*[[${sectionTitle}]]*/ "";
     if (!section) $("#sectionTitle").addClass("d-none");
@@ -84,18 +86,28 @@
     const csrfToken = $('meta[name="_csrf"]').attr('content');
     const csrfHeader = $('meta[name="_csrf_header"]').attr('content');
 
-    const $addForm = $("#add #add-form");
-
     $('#add').on('show.bs.modal', function (event) {
         const button = $(event.relatedTarget);
         vehicleId = button.data('id');
+        selectedVehicleId = vehicleId;
 
         const form = document.getElementById('add-form');
-        form.reset();
+        if (form) {
+            form.reset();
+        }
         $('.form-step').removeClass('was-validated');
-        currentStep = 1;
-
-        updateStepUI();
+        if (typeof resetEstimation === 'function') {
+            resetEstimation();
+        }
+        if (typeof stepIndex !== 'undefined') {
+            stepIndex = 0;
+        }
+        if (typeof currentStep !== 'undefined') {
+            currentStep = 1;
+        }
+        if (typeof updateStepUI === 'function') {
+            updateStepUI();
+        }
     });
 
     $(document).on('click', '#add #submitBtn', function (e) {
@@ -122,6 +134,18 @@
         return typeof val === 'string' ? val.trim() : '';
     }
 
+    function setModalSubmitting(isSubmitting) {
+        $('#prevStepBtn, #cancelBtn, #cancelBookingBtn, #submitBtn').prop('disabled', isSubmitting);
+        if (isSubmitting) {
+            $('#submitBtn').html(`
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Traitement...
+            `);
+        } else {
+            $('#submitBtn').html('<i class="bi bi-check-circle me-1"></i> Confirmer la réservation');
+        }
+    }
+
     function addCustomer() {
         const $form = getAddForm();
         if (!$form) return;
@@ -140,22 +164,19 @@
             data: JSON.stringify(requestCustomer),
             headers: csrfToken && csrfHeader ? { [csrfHeader]: csrfToken } : {},
             beforeSend: function () {
-                $('#prevStepBtn, #cancelBtn, #cancelBookingBtn, #submitBtn').prop('disabled', true);
-                $('#submitBtn').html(`
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Traitement...
-                `);
+                setModalSubmitting(true);
             },
             success: function (response) {
                 if (response.status === 201) {
                     customerId = response.data[0].id;
                     addBooking();
+                } else {
+                    setModalSubmitting(false);
                 }
             },
             error: function (xhr, status, error) {
                 console.error("Erreur création client :", xhr.responseText || error);
-                $('#prevStepBtn, #cancelBtn, #cancelBookingBtn, #submitBtn').prop('disabled', false);
-                $('#submitBtn').html('<i class="bi bi-check-circle me-1"></i> Confirmer la réservation');
+                setModalSubmitting(false);
             }
         });
     }
@@ -165,9 +186,9 @@
         if (!$form) return;
 
         const requestPayment = {
-            amount: $addForm.find('input[name="amount"]').val().trim(),
-            paymentDate: $addForm.find('input[name="paymentDate"]').val().trim(),
-            paymentMode: $addForm.find('select[name="paymentMode"]').val().trim(),
+            amount: getTrimmedField($form, 'input[name="amount"]'),
+            paymentDate: getTrimmedField($form, 'input[name="paymentDate"]'),
+            paymentMode: getTrimmedField($form, 'select[name="paymentMode"]'),
             contractId: contractId,
         };
 
@@ -178,26 +199,23 @@
             data: JSON.stringify(requestPayment),
             headers: csrfToken && csrfHeader ? { [csrfHeader]: csrfToken } : {},
             beforeSend: function () {
-                $('#prevStepBtn, #cancelBookingBtn, #submitBtn').prop('disabled', true);
-                $('#submitBtn').html(`
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Traitement...
-                `);
+                setModalSubmitting(true);
             },
             success: function (response) {
                 if (response.status === 201) {
                     if (typeof alerts === 'function') {
                         alerts("La réservation a été créée avec succès !", 'alert-success', 'bi-check-circle', 1200);
                     }
-                    setTimeout(function() {
+                    setTimeout(function () {
                         location.reload();
                     }, 1200);
+                } else {
+                    setModalSubmitting(false);
                 }
             },
             error: function (xhr, status, error) {
                 console.error("Erreur paiement :", xhr.responseText || error);
-                $('#prevStepBtn, #cancelBookingBtn, #submitBtn').prop('disabled', false);
-                $('#submitBtn').html('<i class="bi bi-check-circle me-1"></i> Confirmer la réservation');
+                setModalSubmitting(false);
             }
         });
     }
@@ -207,8 +225,8 @@
         if (!$form) return;
 
         const requestBooking = {
-            startDate: $addForm.find('input[name="startDate"]').val(),
-            endDate: $addForm.find('input[name="endDate"]').val(),
+            startDate: $form.find('input[name="startDate"]').val(),
+            endDate: $form.find('input[name="endDate"]').val(),
             customerId: customerId,
             vehicleId: vehicleId,
         };
@@ -220,22 +238,19 @@
             data: JSON.stringify(requestBooking),
             headers: csrfToken && csrfHeader ? { [csrfHeader]: csrfToken } : {},
             beforeSend: function () {
-                $('#prevStepBtn, #cancelBookingBtn, #submitBtn').prop('disabled', true);
-                $('#submitBtn').html(`
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Traitement...
-                `);
+                setModalSubmitting(true);
             },
             success: function (response) {
                 if (response.status === 201) {
                     contractId = response.data[0].id;
                     addPayment();
+                } else {
+                    setModalSubmitting(false);
                 }
             },
             error: function (xhr, status, error) {
                 console.error("Erreur réservation :", xhr.responseText || error);
-                $('#prevStepBtn, #cancelBookingBtn, #submitBtn').prop('disabled', false);
-                $('#submitBtn').html('<i class="bi bi-check-circle me-1"></i> Confirmer la réservation');
+                setModalSubmitting(false);
             }
         });
     }

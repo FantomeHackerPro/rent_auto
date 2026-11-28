@@ -1,8 +1,10 @@
 package fr.ece.rentauto.configs;
 
+import jakarta.servlet.RequestDispatcher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,6 +25,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/error",
                                 "/assets/**",
                                 "/uploads/**",
                                 "/login",
@@ -37,7 +40,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users/new-user").permitAll()
 
                         // Dashboard
-                        .requestMatchers("/redirect").authenticated()
+                        .requestMatchers("/redirect", "/").authenticated()
 
                         .requestMatchers(HttpMethod.GET, "/home").hasAnyRole("CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/admin/dashboard").hasAnyRole("ADMIN")
@@ -90,6 +93,18 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/vehicles/**").hasAnyRole("MANAGER")
 
                         .anyRequest().hasRole("ADMIN")
+                )
+                .exceptionHandling(ex -> ex
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpStatus.FORBIDDEN.value());
+                            request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpStatus.FORBIDDEN.value());
+                            request.getRequestDispatcher("/error").forward(request, response);
+                        })
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                            request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpStatus.UNAUTHORIZED.value());
+                            request.getRequestDispatcher("/error").forward(request, response);
+                        })
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
